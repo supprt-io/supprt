@@ -1,0 +1,73 @@
+{
+  "name": "@supprt/widget",
+  "version": "0.0.0",
+  "description": "Embeddable chat widget for customer support. Works with React, Vue, Svelte, Angular, or vanilla JS.",
+  "license": "MIT",
+  "author": "Supprt <contact@supprt.io>",
+  "homepage": "https://supprt.io",
+  "bugs": {
+    "url": "https://github.com/supprt-io/supprt/issues"
+  },
+  "type": "module",
+  "main": "./dist/supprt.js",
+  "module": "./dist/supprt.esm.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/supprt.js",
+  "jsdelivr": "./dist/supprt.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/supprt.esm.js",
+      "require": "./dist/supprt.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "prepublishOnly": "npm run build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "dependencies": {
+    "lucide-preact": "^0.562.0",
+    "preact": "^10.28.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@preact/preset-vite": "^2.10.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "semantic-release": "^25.0.2",
+    "terser": "^5.44.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitepress": "^1.6.4"
+  },
+  "keywords": [
+    "chat",
+    "widget",
+    "support",
+    "customer-support",
+    "embeddable",
+    "react",
+    "vue",
+    "svelte",
+    "angular",
+    "vanilla-js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/supprt-io/supprt.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
