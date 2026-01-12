@@ -30,6 +30,7 @@ export default defineConfig({
           { text: 'Dashboard', link: 'https://app.supprt.io' },
           { text: 'GitHub', link: 'https://github.com/supprt-io/supprt' },
           { text: 'npm', link: 'https://www.npmjs.com/package/@supprt/widget' },
+          { text: 'llms.txt', link: '/llms.txt' },
         ]
       }
     ],

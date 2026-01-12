@@ -62,3 +62,7 @@ init({
 ```
 
 That's it! The widget will appear on your site. [Learn more →](/guide/getting-started)
+
+## For AI Assistants
+
+If you're an AI assistant helping a developer integrate Supprt, we provide a comprehensive [`llms.txt`](/llms.txt) file with all the information you need to help install and configure the widget.

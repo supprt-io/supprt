@@ -1,0 +1,305 @@
+# @supprt/widget
+
+Supprt is a lightweight, embeddable customer support chat widget. It connects website visitors to support teams via Discord, Slack, or custom webhooks.
+
+Package: @supprt/widget
+Documentation: https://docs.supprt.io
+GitHub: https://github.com/supprt-io/supprt
+npm: https://www.npmjs.com/package/@supprt/widget
+
+## Key Features
+
+- Framework agnostic (works with any JS framework or vanilla JS)
+- Shadow DOM for complete style isolation
+- ~14KB gzipped, zero dependencies
+- Supports user identification for authenticated users
+- Multi-language support (en, fr, es, de)
+- Customizable colors and position
+
+## Installation
+
+npm install @supprt/widget
+
+Or via CDN:
+<script src="https://unpkg.com/@supprt/widget"></script>
+
+## Basic Usage
+
+import { init, destroy, isInitialized } from '@supprt/widget'
+
+// Initialize
+init({
+  publicKey: 'pk_xxx' // Get this from your Supprt dashboard
+})
+
+// Cleanup (call on unmount)
+destroy()
+
+// Check status
+isInitialized() // returns boolean
+
+## Configuration
+
+interface SupprtConfig {
+  // Required
+  publicKey: string
+
+  // Optional
+  apiUrl?: string                              // Custom API URL
+  position?: 'bottom-right' | 'bottom-left'    // Default: 'bottom-right'
+  primaryColor?: string                        // Hex color, e.g. '#2a9d8f'
+  zIndex?: number                              // CSS z-index for the widget
+  locale?: 'en' | 'fr' | 'es' | 'de'          // UI language
+
+  // User identification (for authenticated users)
+  user?: {
+    id: string          // Required: unique user identifier
+    email?: string      // Optional: user's email
+    name?: string       // Optional: display name
+    avatar?: string     // Optional: avatar URL
+  }
+}
+
+## Framework Examples
+
+### React
+
+import { useEffect } from 'react'
+import { init, destroy } from '@supprt/widget'
+
+function App() {
+  useEffect(() => {
+    init({ publicKey: 'pk_xxx' })
+    return () => destroy()
+  }, [])
+
+  return <div>Your app</div>
+}
+
+### React with User Identification
+
+import { useEffect } from 'react'
+import { init, destroy } from '@supprt/widget'
+import { useAuth } from './auth' // your auth hook
+
+function App() {
+  const { user } = useAuth()
+
+  useEffect(() => {
+    init({
+      publicKey: 'pk_xxx',
+      user: user ? {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatarUrl
+      } : undefined
+    })
+    return () => destroy()
+  }, [user])
+
+  return <div>Your app</div>
+}
+
+### Next.js (App Router)
+
+// components/supprt-widget.tsx
+'use client'
+
+import { useEffect } from 'react'
+import { init, destroy } from '@supprt/widget'
+
+export function SupprtWidget() {
+  useEffect(() => {
+    init({ publicKey: 'pk_xxx' })
+    return () => destroy()
+  }, [])
+
+  return null
+}
+
+// app/layout.tsx
+import { SupprtWidget } from '@/components/supprt-widget'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <SupprtWidget />
+      </body>
+    </html>
+  )
+}
+
+### Next.js (Pages Router)
+
+// pages/_app.tsx
+import { useEffect } from 'react'
+import { init, destroy } from '@supprt/widget'
+import type { AppProps } from 'next/app'
+
+export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    init({ publicKey: 'pk_xxx' })
+    return () => destroy()
+  }, [])
+
+  return <Component {...pageProps} />
+}
+
+### Vue 3
+
+<script setup>
+import { onMounted, onUnmounted } from 'vue'
+import { init, destroy } from '@supprt/widget'
+
+onMounted(() => {
+  init({ publicKey: 'pk_xxx' })
+})
+
+onUnmounted(() => {
+  destroy()
+})
+</script>
+
+<template>
+  <div>Your app</div>
+</template>
+
+### Nuxt 3
+
+// plugins/supprt.client.ts
+import { init } from '@supprt/widget'
+
+export default defineNuxtPlugin(() => {
+  init({ publicKey: 'pk_xxx' })
+})
+
+### Svelte
+
+<script>
+  import { onMount, onDestroy } from 'svelte'
+  import { init, destroy } from '@supprt/widget'
+
+  onMount(() => {
+    init({ publicKey: 'pk_xxx' })
+  })
+
+  onDestroy(() => {
+    destroy()
+  })
+</script>
+
+### SvelteKit
+
+<!-- src/routes/+layout.svelte -->
+<script>
+  import { onMount, onDestroy } from 'svelte'
+  import { browser } from '$app/environment'
+  import { init, destroy } from '@supprt/widget'
+
+  onMount(() => {
+    if (browser) {
+      init({ publicKey: 'pk_xxx' })
+    }
+  })
+
+  onDestroy(() => {
+    if (browser) {
+      destroy()
+    }
+  })
+</script>
+
+<slot />
+
+### Angular
+
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { init, destroy } from '@supprt/widget'
+
+@Component({
+  selector: 'app-root',
+  template: '<router-outlet></router-outlet>'
+})
+export class AppComponent implements OnInit, OnDestroy {
+  ngOnInit() {
+    init({ publicKey: 'pk_xxx' })
+  }
+
+  ngOnDestroy() {
+    destroy()
+  }
+}
+
+### Astro
+
+---
+// src/components/SupprtWidget.astro
+---
+
+<script>
+  import { init } from '@supprt/widget'
+  init({ publicKey: 'pk_xxx' })
+</script>
+
+Then in your layout:
+---
+import SupprtWidget from '@/components/SupprtWidget.astro'
+---
+
+<html>
+  <body>
+    <slot />
+    <SupprtWidget />
+  </body>
+</html>
+
+### Vanilla JavaScript
+
+<script type="module">
+  import { init } from 'https://unpkg.com/@supprt/widget'
+  init({ publicKey: 'pk_xxx' })
+</script>
+
+### Script Tag (no build step)
+
+<script src="https://unpkg.com/@supprt/widget"></script>
+<script>
+  Supprt.init({ publicKey: 'pk_xxx' })
+</script>
+
+## Important Notes
+
+1. Always call destroy() on component unmount to prevent memory leaks
+2. The widget uses Shadow DOM - your CSS will not affect it
+3. Only one widget instance can be active at a time
+4. The publicKey is safe to expose in client-side code
+5. For SSR frameworks, ensure init() only runs on the client side
+
+## Troubleshooting
+
+Widget not appearing:
+- Verify publicKey is correct
+- Check browser console for errors
+- Ensure init() is called after DOM is ready
+
+Widget styles look wrong:
+- The widget uses Shadow DOM, external CSS cannot affect it
+- Use primaryColor config option to customize colors
+
+Multiple widgets appearing:
+- Ensure destroy() is called before re-initializing
+- Check that init() is not called multiple times
+
+## TypeScript
+
+The package includes TypeScript definitions. All types are exported:
+
+import type { SupprtConfig } from '@supprt/widget'
+
+const config: SupprtConfig = {
+  publicKey: 'pk_xxx',
+  position: 'bottom-right'
+}
