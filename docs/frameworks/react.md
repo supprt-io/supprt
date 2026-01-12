@@ -17,7 +17,7 @@ import { init, destroy } from '@supprt/widget'
 function App() {
   useEffect(() => {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
 
     return () => destroy()
@@ -52,7 +52,7 @@ export function useSupprt(config, options = {}) {
       if (onMessage) off('message:received', onMessage)
       destroy()
     }
-  }, [config.projectId])
+  }, [config.publicKey])
 }
 ```
 
@@ -63,7 +63,7 @@ import { useSupprt } from './hooks/useSupprt'
 
 function App() {
   useSupprt(
-    { projectId: 'YOUR_PROJECT_ID' },
+    { publicKey: 'pk_xxx' },
     {
       onOpen: () => console.log('opened'),
       onMessage: (msg) => console.log('message:', msg)
@@ -86,7 +86,7 @@ function App() {
 
   useEffect(() => {
     const config = {
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     }
 
     if (isAuthenticated && user) {
@@ -132,7 +132,7 @@ function App() {
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    init({ projectId: 'YOUR_PROJECT_ID' })
+    init({ publicKey: 'pk_xxx' })
 
     const handleMessage = () => {
       setUnreadCount(c => c + 1)
@@ -165,11 +165,11 @@ import { init, destroy, on, off, isInitialized } from '@supprt/widget'
 
 const SupprtContext = createContext(null)
 
-export function SupprtProvider({ projectId, children }) {
+export function SupprtProvider({ publicKey, children }) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    init({ projectId })
+    init({ publicKey })
 
     const handleReady = () => setReady(true)
     on('ready', handleReady)
@@ -178,7 +178,7 @@ export function SupprtProvider({ projectId, children }) {
       off('ready', handleReady)
       destroy()
     }
-  }, [projectId])
+  }, [publicKey])
 
   return (
     <SupprtContext.Provider value={{ ready, isInitialized }}>
@@ -197,7 +197,7 @@ import { SupprtProvider } from './context/SupprtContext'
 
 function App() {
   return (
-    <SupprtProvider projectId="YOUR_PROJECT_ID">
+    <SupprtProvider publicKey="pk_xxx">
       <YourApp />
     </SupprtProvider>
   )
@@ -222,7 +222,7 @@ interface Props {
 function App({ user }: Props) {
   useEffect(() => {
     const config: SupprtConfig = {
-      projectId: 'YOUR_PROJECT_ID',
+      publicKey: 'pk_xxx',
       user: user ? {
         id: user.id,
         email: user.email,

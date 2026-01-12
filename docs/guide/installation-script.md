@@ -8,8 +8,8 @@ Add this line before your closing `</body>` tag:
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
 ></script>
 ```
 
@@ -19,11 +19,11 @@ You can configure the widget using `data-*` attributes:
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
   data-position="bottom-right"
   data-primary-color="#14b8a6"
-  data-welcome-message="Hi! How can we help you today?"
+  data-locale="en"
   data-z-index="9999"
 ></script>
 ```
@@ -32,11 +32,10 @@ You can configure the widget using `data-*` attributes:
 
 | Attribute | Description | Default |
 |-----------|-------------|---------|
-| `data-project-id` | Your project ID (required) | - |
-| `data-api-url` | Custom API URL | `https://api.supprt.io` |
+| `data-public-key` | Your public key (required) | - |
 | `data-position` | Widget position | `bottom-right` |
 | `data-primary-color` | Brand color (hex) | `#14b8a6` |
-| `data-welcome-message` | Initial greeting | - |
+| `data-locale` | UI language | `en` |
 | `data-z-index` | CSS z-index | `999999` |
 
 ## User Identification
@@ -45,8 +44,8 @@ To identify logged-in users, add user data attributes:
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
   data-user-id="user_123"
   data-user-email="john@example.com"
   data-user-name="John Doe"
@@ -57,12 +56,12 @@ To identify logged-in users, add user data attributes:
 Don't include sensitive user data in HTML attributes. For dynamic user identification, use the [npm package](/guide/installation-npm) instead.
 :::
 
-## Loading from CDN
+## Loading from unpkg
 
-The widget is served from our global CDN for fast loading:
+The widget is served from unpkg for fast loading:
 
 ```
-https://cdn.supprt.io/widget.js
+https://unpkg.com/@supprt/widget
 ```
 
 ### Specific Version
@@ -70,7 +69,7 @@ https://cdn.supprt.io/widget.js
 To pin a specific version:
 
 ```html
-<script src="https://cdn.supprt.io/widget@1.0.0.js"></script>
+<script src="https://unpkg.com/@supprt/widget@0.0.3"></script>
 ```
 
 ### Subresource Integrity (SRI)
@@ -79,10 +78,10 @@ For added security, use SRI:
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
+  src="https://unpkg.com/@supprt/widget@0.0.3"
   integrity="sha384-..."
   crossorigin="anonymous"
-  data-project-id="YOUR_PROJECT_ID"
+  data-public-key="pk_xxx"
 ></script>
 ```
 
@@ -93,8 +92,8 @@ To prevent render-blocking, load the script asynchronously:
 ```html
 <script
   async
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
 ></script>
 ```
 
@@ -111,8 +110,8 @@ Load the widget only on certain pages:
   // Only load on support pages
   if (window.location.pathname.startsWith('/support')) {
     const script = document.createElement('script')
-    script.src = 'https://cdn.supprt.io/widget.js'
-    script.dataset.projectId = 'YOUR_PROJECT_ID'
+    script.src = 'https://unpkg.com/@supprt/widget'
+    script.dataset.publicKey = 'pk_xxx'
     document.body.appendChild(script)
   }
 </script>
@@ -123,7 +122,7 @@ Load the widget only on certain pages:
 If your site uses CSP, add these directives:
 
 ```
-script-src 'self' https://cdn.supprt.io;
+script-src 'self' https://unpkg.com;
 connect-src 'self' https://api.supprt.io;
 style-src 'self' 'unsafe-inline';
 ```

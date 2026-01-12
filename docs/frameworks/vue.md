@@ -17,7 +17,7 @@ import { init, destroy } from '@supprt/widget'
 
 onMounted(() => {
   init({
-    projectId: 'YOUR_PROJECT_ID'
+    publicKey: 'pk_xxx'
   })
 })
 
@@ -69,7 +69,7 @@ Usage:
 import { useSupprt } from '@/composables/useSupprt'
 
 const { ready } = useSupprt({
-  projectId: 'YOUR_PROJECT_ID'
+  publicKey: 'pk_xxx'
 })
 </script>
 
@@ -92,7 +92,7 @@ function initWidget() {
   destroy() // Clean up previous instance
 
   const config = {
-    projectId: 'YOUR_PROJECT_ID'
+    publicKey: 'pk_xxx'
   }
 
   if (isAuthenticated.value && user.value) {
@@ -142,7 +142,7 @@ import { init, destroy, on, off } from '@supprt/widget'
 const unreadCount = ref(0)
 
 onMounted(() => {
-  init({ projectId: 'YOUR_PROJECT_ID' })
+  init({ publicKey: 'pk_xxx' })
 
   on('message:received', () => {
     unreadCount.value++
@@ -198,7 +198,7 @@ import App from './App.vue'
 const app = createApp(App)
 
 app.use(SupprtPlugin, {
-  projectId: 'YOUR_PROJECT_ID'
+  publicKey: 'pk_xxx'
 })
 
 app.mount('#app')
@@ -213,7 +213,7 @@ import { init, destroy, on, off } from '@supprt/widget'
 import type { SupprtConfig, Message } from '@supprt/widget'
 
 interface Props {
-  projectId: string
+  publicKey: string
   user?: {
     id: string
     email: string
@@ -225,7 +225,7 @@ const props = defineProps<Props>()
 
 onMounted(() => {
   const config: SupprtConfig = {
-    projectId: props.projectId,
+    publicKey: props.publicKey,
     user: props.user
   }
 
@@ -253,7 +253,7 @@ import { init, destroy, on, off } from '@supprt/widget'
 export default {
   mounted() {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
 
     on('message:received', this.handleMessage)

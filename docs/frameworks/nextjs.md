@@ -24,7 +24,7 @@ import { init, destroy } from '@supprt/widget'
 export function Supprt() {
   useEffect(() => {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
 
     return () => destroy()
@@ -71,7 +71,7 @@ export function Supprt() {
 
   useEffect(() => {
     const config = {
-      projectId: 'YOUR_PROJECT_ID',
+      publicKey: 'pk_xxx',
       user: session?.user ? {
         id: session.user.id,
         email: session.user.email,
@@ -93,7 +93,7 @@ export function Supprt() {
 
 ```bash
 # .env.local
-NEXT_PUBLIC_SUPPRT_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SUPPRT_PUBLIC_KEY=pk_xxx
 ```
 
 ```tsx
@@ -106,7 +106,7 @@ import { init, destroy } from '@supprt/widget'
 export function Supprt() {
   useEffect(() => {
     init({
-      projectId: process.env.NEXT_PUBLIC_SUPPRT_PROJECT_ID!
+      publicKey: process.env.NEXT_PUBLIC_SUPPRT_PUBLIC_KEY!
     })
 
     return () => destroy()
@@ -129,7 +129,7 @@ import { init, destroy } from '@supprt/widget'
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
 
     return () => destroy()
@@ -153,7 +153,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const config = {
-      projectId: 'YOUR_PROJECT_ID',
+      publicKey: 'pk_xxx',
       user: session?.user ? {
         id: session.user.id,
         email: session.user.email ?? undefined,
@@ -190,7 +190,7 @@ export function Supprt() {
 
   useEffect(() => {
     if (shouldShow) {
-      init({ projectId: 'YOUR_PROJECT_ID' })
+      init({ publicKey: 'pk_xxx' })
       return () => destroy()
     }
   }, [shouldShow])
@@ -214,7 +214,7 @@ export function Supprt() {
 
   useEffect(() => {
     import('@supprt/widget').then(({ init }) => {
-      init({ projectId: 'YOUR_PROJECT_ID' })
+      init({ publicKey: 'pk_xxx' })
       setLoaded(true)
     })
 
@@ -247,8 +247,8 @@ export default function RootLayout({
       <body>
         {children}
         <Script
-          src="https://cdn.supprt.io/widget.js"
-          data-project-id="YOUR_PROJECT_ID"
+          src="https://unpkg.com/@supprt/widget"
+          data-public-key="pk_xxx"
           strategy="lazyOnload"
         />
       </body>
@@ -268,7 +268,7 @@ import { init, destroy } from '@supprt/widget'
 import type { SupprtConfig } from '@supprt/widget'
 
 interface SupprtProps {
-  projectId: string
+  publicKey: string
   user?: {
     id: string
     email?: string
@@ -276,17 +276,17 @@ interface SupprtProps {
   }
 }
 
-export function Supprt({ projectId, user }: SupprtProps) {
+export function Supprt({ publicKey, user }: SupprtProps) {
   useEffect(() => {
     const config: SupprtConfig = {
-      projectId,
+      publicKey,
       user
     }
 
     init(config)
 
     return () => destroy()
-  }, [projectId, user?.id])
+  }, [publicKey, user?.id])
 
   return null
 }

@@ -20,7 +20,7 @@ Listen to widget events to integrate with your application.
 import { init, on, off } from '@supprt/widget'
 
 init({
-  projectId: 'YOUR_PROJECT_ID'
+  publicKey: 'pk_xxx'
 })
 
 // Listen to events
@@ -177,7 +177,7 @@ import { init, on, off } from '@supprt/widget'
 
 function App() {
   useEffect(() => {
-    init({ projectId: 'YOUR_PROJECT_ID' })
+    init({ publicKey: 'pk_xxx' })
 
     const handleOpen = () => {
       console.log('Chat opened')

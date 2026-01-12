@@ -25,8 +25,8 @@ Add to your layout:
   <body>
     <slot />
     <script
-      src="https://cdn.supprt.io/widget.js"
-      data-project-id="YOUR_PROJECT_ID"
+      src="https://unpkg.com/@supprt/widget"
+      data-public-key="pk_xxx"
     ></script>
   </body>
 </html>
@@ -50,7 +50,7 @@ Add to your layout:
       import { init } from '@supprt/widget'
 
       init({
-        projectId: 'YOUR_PROJECT_ID'
+        publicKey: 'pk_xxx'
       })
     </script>
   </body>
@@ -65,21 +65,21 @@ Create a reusable component:
 ---
 // src/components/Supprt.astro
 interface Props {
-  projectId: string
+  publicKey: string
   position?: 'bottom-right' | 'bottom-left'
   primaryColor?: string
 }
 
-const { projectId, position, primaryColor } = Astro.props
+const { publicKey, position, primaryColor } = Astro.props
 ---
 
 <script
-  define:vars={{ projectId, position, primaryColor }}
+  define:vars={{ publicKey, position, primaryColor }}
 >
   import { init } from '@supprt/widget'
 
   init({
-    projectId,
+    publicKey,
     position,
     primaryColor
   })
@@ -97,7 +97,7 @@ import Supprt from '../components/Supprt.astro'
   <body>
     <slot />
     <Supprt
-      projectId="YOUR_PROJECT_ID"
+      publicKey="pk_xxx"
       position="bottom-right"
       primaryColor="#8b5cf6"
     />
@@ -117,14 +117,14 @@ import { useEffect } from 'react'
 import { init, destroy } from '@supprt/widget'
 
 interface Props {
-  projectId: string
+  publicKey: string
 }
 
-export default function SupprtWidget({ projectId }: Props) {
+export default function SupprtWidget({ publicKey }: Props) {
   useEffect(() => {
-    init({ projectId })
+    init({ publicKey })
     return () => destroy()
-  }, [projectId])
+  }, [publicKey])
 
   return null
 }
@@ -138,7 +138,7 @@ import SupprtWidget from '../components/SupprtWidget'
 <html lang="en">
   <body>
     <slot />
-    <SupprtWidget client:load projectId="YOUR_PROJECT_ID" />
+    <SupprtWidget client:load publicKey="pk_xxx" />
   </body>
 </html>
 ```
@@ -152,11 +152,11 @@ import { onMounted, onUnmounted } from 'vue'
 import { init, destroy } from '@supprt/widget'
 
 const props = defineProps({
-  projectId: String
+  publicKey: String
 })
 
 onMounted(() => {
-  init({ projectId: props.projectId })
+  init({ publicKey: props.publicKey })
 })
 
 onUnmounted(() => {
@@ -173,24 +173,24 @@ onUnmounted(() => {
 ---
 import SupprtWidget from '../components/SupprtWidget.vue'
 ---
-<SupprtWidget client:load projectId="YOUR_PROJECT_ID" />
+<SupprtWidget client:load publicKey="pk_xxx" />
 ```
 
 ## Environment Variables
 
 ```bash
 # .env
-PUBLIC_SUPPRT_PROJECT_ID=your_project_id
+PUBLIC_SUPPRT_PUBLIC_KEY=pk_xxx
 ```
 
 ```astro
 ---
 // src/layouts/Layout.astro
-const projectId = import.meta.env.PUBLIC_SUPPRT_PROJECT_ID
+const publicKey = import.meta.env.PUBLIC_SUPPRT_PUBLIC_KEY
 ---
-<script define:vars={{ projectId }}>
+<script define:vars={{ publicKey }}>
   import { init } from '@supprt/widget'
-  init({ projectId })
+  init({ publicKey })
 </script>
 ```
 
@@ -212,7 +212,7 @@ const showSupprt = ['/support', '/contact', '/help'].some(p =>
     {showSupprt && (
       <script>
         import { init } from '@supprt/widget'
-        init({ projectId: 'YOUR_PROJECT_ID' })
+        init({ publicKey: 'pk_xxx' })
       </script>
     )}
   </body>
@@ -232,7 +232,7 @@ const user = await getUser(Astro.request) // Your auth logic
   import { init } from '@supprt/widget'
 
   init({
-    projectId: 'YOUR_PROJECT_ID',
+    publicKey: 'pk_xxx',
     user: user ? {
       id: user.id,
       email: user.email,
@@ -262,13 +262,13 @@ import { ViewTransitions } from 'astro:transitions'
 
       // Initialize on first load
       if (!isInitialized()) {
-        init({ projectId: 'YOUR_PROJECT_ID' })
+        init({ publicKey: 'pk_xxx' })
       }
 
       // Re-initialize after view transitions
       document.addEventListener('astro:page-load', () => {
         if (!isInitialized()) {
-          init({ projectId: 'YOUR_PROJECT_ID' })
+          init({ publicKey: 'pk_xxx' })
         }
       })
     </script>

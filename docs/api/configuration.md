@@ -8,43 +8,27 @@ The configuration object passed to `init()`.
 
 ```typescript
 interface SupprtConfig {
-  projectId: string
-  apiUrl?: string
+  publicKey: string
   position?: 'bottom-right' | 'bottom-left'
   primaryColor?: string
-  welcomeMessage?: string
   zIndex?: number
+  locale?: 'en' | 'fr' | 'es' | 'de'
   user?: SupprtUser
 }
 ```
 
 ## Options
 
-### projectId
+### publicKey
 
 - **Type:** `string`
 - **Required:** Yes
 
-Your project's unique identifier. Found in your project settings on the dashboard.
+Your project's public key. Found in your project settings on the dashboard.
 
 ```javascript
 init({
-  projectId: 'proj_abc123'
-})
-```
-
-### apiUrl
-
-- **Type:** `string`
-- **Required:** No
-- **Default:** `'https://api.supprt.io'`
-
-The API endpoint URL. Only change this if you're self-hosting.
-
-```javascript
-init({
-  projectId: 'proj_abc123',
-  apiUrl: 'https://api.your-domain.com'
+  publicKey: 'pk_xxx'
 })
 ```
 
@@ -58,7 +42,7 @@ Position of the widget on the page.
 
 ```javascript
 init({
-  projectId: 'proj_abc123',
+  publicKey: 'pk_xxx',
   position: 'bottom-left'
 })
 ```
@@ -73,23 +57,8 @@ The primary brand color used for buttons and accents. Must be a valid hex color.
 
 ```javascript
 init({
-  projectId: 'proj_abc123',
+  publicKey: 'pk_xxx',
   primaryColor: '#8b5cf6'
-})
-```
-
-### welcomeMessage
-
-- **Type:** `string`
-- **Required:** No
-- **Default:** `undefined`
-
-A welcome message shown when the user first opens the widget.
-
-```javascript
-init({
-  projectId: 'proj_abc123',
-  welcomeMessage: 'Hi! 👋 How can we help you today?'
 })
 ```
 
@@ -103,8 +72,23 @@ The CSS z-index of the widget. Increase if the widget appears behind other eleme
 
 ```javascript
 init({
-  projectId: 'proj_abc123',
+  publicKey: 'pk_xxx',
   zIndex: 2147483647 // Maximum z-index
+})
+```
+
+### locale
+
+- **Type:** `'en' | 'fr' | 'es' | 'de'`
+- **Required:** No
+- **Default:** `'en'`
+
+The UI language for the widget.
+
+```javascript
+init({
+  publicKey: 'pk_xxx',
+  locale: 'fr'
 })
 ```
 
@@ -118,7 +102,7 @@ User information for identified users. See [SupprtUser](#supprtuser).
 
 ```javascript
 init({
-  projectId: 'proj_abc123',
+  publicKey: 'pk_xxx',
   user: {
     id: 'user_123',
     email: 'john@example.com',
@@ -174,12 +158,11 @@ When using the script tag, configuration is passed via data attributes:
 
 | Attribute | Config Property |
 |-----------|-----------------|
-| `data-project-id` | `projectId` |
-| `data-api-url` | `apiUrl` |
+| `data-public-key` | `publicKey` |
 | `data-position` | `position` |
 | `data-primary-color` | `primaryColor` |
-| `data-welcome-message` | `welcomeMessage` |
 | `data-z-index` | `zIndex` |
+| `data-locale` | `locale` |
 | `data-user-id` | `user.id` |
 | `data-user-email` | `user.email` |
 | `data-user-name` | `user.name` |
@@ -192,18 +175,15 @@ import { init } from '@supprt/widget'
 
 init({
   // Required
-  projectId: 'proj_abc123',
-
-  // API
-  apiUrl: 'https://api.supprt.io',
+  publicKey: 'pk_xxx',
 
   // Appearance
   position: 'bottom-right',
   primaryColor: '#14b8a6',
   zIndex: 999999,
 
-  // Content
-  welcomeMessage: 'Welcome! How can we help?',
+  // Localization
+  locale: 'en',
 
   // User identification
   user: {

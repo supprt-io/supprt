@@ -19,31 +19,31 @@ Supprt is a lightweight customer support solution that lets your website visitor
 
 ## Key Features
 
-### 🎯 Simple Integration
+### Simple Integration
 
 Add a single script tag or npm package. No complex setup, no backend required.
 
-### 🔄 Multi-Channel Support
+### Multi-Channel Support
 
 Receive and respond to messages where your team already works:
 - **Discord** - Get messages in a channel, reply in threads
 - **Slack** - Native Slack integration with thread support
 - **Webhooks** - Connect to any system with custom webhooks
 
-### 🎨 Customizable
+### Customizable
 
 - Custom brand colors
 - Configurable position (bottom-right or bottom-left)
 - Custom welcome messages
 - Light/dark mode support
 
-### 👤 User Identification
+### User Identification
 
 Identify logged-in users to provide personalized support:
 
 ```javascript
 init({
-  projectId: 'your-project-id',
+  publicKey: 'pk_xxx',
   user: {
     id: 'user_123',
     email: 'user@example.com',
@@ -52,12 +52,11 @@ init({
 })
 ```
 
-### 🔒 Privacy-First
+### Privacy-First
 
 - Shadow DOM isolation (no CSS conflicts)
 - Fingerprint-based anonymous tracking
 - GDPR-friendly design
-- Self-hostable for full data control
 
 ## Architecture
 

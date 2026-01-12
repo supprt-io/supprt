@@ -22,7 +22,7 @@ import { init, destroy } from '@supprt/widget'
 export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
   }
 
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.supprtService.init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
   }
 }
@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
       destroy()
 
       const config: any = {
-        projectId: 'YOUR_PROJECT_ID'
+        publicKey: 'pk_xxx'
       }
 
       if (user) {
@@ -190,7 +190,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    init({ projectId: 'YOUR_PROJECT_ID' })
+    init({ publicKey: 'pk_xxx' })
     on('message:received', this.handleMessage)
   }
 
@@ -211,7 +211,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core'
 import { SupprtService } from './services/supprt.service'
 
 export interface SupprtModuleConfig {
-  projectId: string
+  publicKey: string
 }
 
 @NgModule({})
@@ -238,7 +238,7 @@ import { SupprtModule } from './supprt.module'
 @NgModule({
   imports: [
     SupprtModule.forRoot({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
   ]
 })
@@ -264,7 +264,7 @@ import { init, destroy } from '@supprt/widget'
 export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
   }
 

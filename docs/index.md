@@ -34,7 +34,7 @@ features:
     details: Route conversations to Discord, Slack, or custom webhooks. Your team responds where they already work.
   - icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
     title: Open Source
-    details: MIT licensed. Fully transparent code. Self-host or use our managed cloud service.
+    details: MIT licensed. Fully transparent code you can trust.
 ---
 
 ## Quick Start
@@ -44,7 +44,7 @@ features:
 Add this single line to your HTML:
 
 ```html
-<script src="https://cdn.supprt.io/widget.js" data-project-id="your-project-id"></script>
+<script src="https://unpkg.com/@supprt/widget" data-public-key="pk_xxx"></script>
 ```
 
 ### Option 2: npm Package
@@ -57,7 +57,7 @@ npm install @supprt/widget
 import { init } from '@supprt/widget'
 
 init({
-  projectId: 'your-project-id'
+  publicKey: 'pk_xxx'
 })
 ```
 

@@ -31,7 +31,7 @@ import { init, destroy } from '@supprt/widget'
 
 // Initialize the widget
 init({
-  projectId: 'YOUR_PROJECT_ID'
+  publicKey: 'pk_xxx'
 })
 
 // Later, remove the widget
@@ -45,10 +45,7 @@ import { init } from '@supprt/widget'
 
 init({
   // Required
-  projectId: 'YOUR_PROJECT_ID',
-
-  // Optional: Custom API URL (for self-hosted)
-  apiUrl: 'https://api.supprt.io',
+  publicKey: 'pk_xxx',
 
   // Optional: Widget position
   position: 'bottom-right', // or 'bottom-left'
@@ -56,8 +53,8 @@ init({
   // Optional: Brand color
   primaryColor: '#14b8a6',
 
-  // Optional: Welcome message
-  welcomeMessage: 'Hi! How can we help you today?',
+  // Optional: UI language
+  locale: 'en', // 'en', 'fr', 'es', 'de'
 
   // Optional: CSS z-index
   zIndex: 999999,
@@ -87,7 +84,7 @@ const user: SupprtUser = {
 }
 
 const config: SupprtConfig = {
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   user
 }
 

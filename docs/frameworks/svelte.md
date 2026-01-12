@@ -17,7 +17,7 @@ npm install @supprt/widget
 
   onMount(() => {
     init({
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     })
   })
 
@@ -65,7 +65,7 @@ Usage:
   import { initSupprt, destroySupprt, supprtReady, unreadCount } from './stores/supprt'
 
   onMount(() => {
-    initSupprt({ projectId: 'YOUR_PROJECT_ID' })
+    initSupprt({ publicKey: 'pk_xxx' })
   })
 
   onDestroy(() => {
@@ -96,7 +96,7 @@ Usage:
     destroy()
 
     const config = {
-      projectId: 'YOUR_PROJECT_ID'
+      publicKey: 'pk_xxx'
     }
 
     if ($isAuthenticated && $user) {
@@ -152,7 +152,7 @@ Usage:
   }
 
   onMount(() => {
-    init({ projectId: 'YOUR_PROJECT_ID' })
+    init({ publicKey: 'pk_xxx' })
     on('message:received', handleMessage)
   })
 
@@ -197,7 +197,7 @@ Usage:
   import { supprt } from './actions/supprt'
 
   const config = {
-    projectId: 'YOUR_PROJECT_ID'
+    publicKey: 'pk_xxx'
   }
 </script>
 
@@ -220,7 +220,7 @@ For SvelteKit, initialize in the layout:
   onMount(() => {
     if (browser) {
       init({
-        projectId: 'YOUR_PROJECT_ID'
+        publicKey: 'pk_xxx'
       })
     }
   })
@@ -243,12 +243,12 @@ For SvelteKit, initialize in the layout:
   import { init, destroy, on, off } from '@supprt/widget'
   import type { SupprtConfig, Message } from '@supprt/widget'
 
-  export let projectId: string
+  export let publicKey: string
   export let user: { id: string; email: string; name: string } | undefined = undefined
 
   onMount(() => {
     const config: SupprtConfig = {
-      projectId,
+      publicKey,
       user
     }
 

@@ -19,7 +19,7 @@ Without identification, users are tracked anonymously via fingerprinting.
 import { init } from '@supprt/widget'
 
 init({
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   user: {
     id: 'user_123',           // Required: Unique user ID
     email: 'john@example.com', // Optional
@@ -33,8 +33,8 @@ init({
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
   data-user-id="user_123"
   data-user-email="john@example.com"
   data-user-name="John Doe"
@@ -97,7 +97,7 @@ import { init, destroy } from '@supprt/widget'
 function onLogin(user) {
   destroy() // Remove anonymous widget
   init({
-    projectId: 'YOUR_PROJECT_ID',
+    publicKey: 'pk_xxx',
     user: {
       id: user.id,
       email: user.email,
@@ -110,7 +110,7 @@ function onLogin(user) {
 function onLogout() {
   destroy() // Remove authenticated widget
   init({
-    projectId: 'YOUR_PROJECT_ID'
+    publicKey: 'pk_xxx'
     // No user = anonymous mode
   })
 }
@@ -133,7 +133,6 @@ Anonymous users can still have continuous conversations within the same browser.
 - User data is transmitted securely via HTTPS
 - Data is stored encrypted at rest
 - You can delete user data via the API
-- Self-hosting gives you full data control
 
 ## Security
 
@@ -158,7 +157,7 @@ function App() {
   useEffect(() => {
     if (isAuthenticated && user) {
       init({
-        projectId: 'YOUR_PROJECT_ID',
+        publicKey: 'pk_xxx',
         user: {
           id: user.id,
           email: user.email,
@@ -168,7 +167,7 @@ function App() {
       })
     } else {
       init({
-        projectId: 'YOUR_PROJECT_ID'
+        publicKey: 'pk_xxx'
       })
     }
 

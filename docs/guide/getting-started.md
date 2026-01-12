@@ -8,14 +8,14 @@ Before you begin, you'll need:
 
 1. A Supprt account ([sign up here](https://app.supprt.io))
 2. A project with at least one integration (Discord, Slack, or Webhook)
-3. Your project's **Project ID** (found in project settings)
+3. Your project's **Public Key** (found in project settings)
 
 ## Step 1: Create a Project
 
 1. Log in to your [Supprt Dashboard](https://app.supprt.io)
 2. Click **New Project**
 3. Enter a name for your project
-4. Copy your **Project ID** from the project settings
+4. Copy your **Public Key** from the project settings
 
 ## Step 2: Add an Integration
 
@@ -46,12 +46,12 @@ Add this line before your closing `</body>` tag:
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
 ></script>
 ```
 
-Replace `YOUR_PROJECT_ID` with your actual project ID.
+Replace `pk_xxx` with your actual public key.
 
 ### npm Package
 
@@ -83,7 +83,7 @@ Initialize in your app:
 import { init } from '@supprt/widget'
 
 init({
-  projectId: 'YOUR_PROJECT_ID'
+  publicKey: 'pk_xxx'
 })
 ```
 
@@ -96,7 +96,7 @@ init({
 
 ::: tip
 If you don't see the widget, check the browser console for errors. Common issues:
-- Invalid project ID
+- Invalid public key
 - Project has no active integrations
 - Script blocked by ad blockers
 :::
@@ -115,7 +115,7 @@ Now that you have the basic setup working:
 ### Widget not appearing
 
 1. Check that the script is loaded (Network tab in DevTools)
-2. Verify the project ID is correct
+2. Verify the public key is correct
 3. Ensure the project has at least one active integration
 4. Check for JavaScript errors in the console
 

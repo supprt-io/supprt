@@ -20,13 +20,13 @@ export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
 
   init({
-    projectId: config.public.supprtProjectId
+    publicKey: config.public.supprtPublicKey
   })
 
   // Clean up on app unmount
   nuxtApp.hook('app:beforeMount', () => {
     init({
-      projectId: config.public.supprtProjectId
+      publicKey: config.public.supprtPublicKey
     })
   })
 })
@@ -39,7 +39,7 @@ Configure in `nuxt.config.ts`:
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      supprtProjectId: process.env.NUXT_PUBLIC_SUPPRT_PROJECT_ID
+      supprtPublicKey: process.env.NUXT_PUBLIC_SUPPRT_PUBLIC_KEY
     }
   }
 })
@@ -49,7 +49,7 @@ Environment variables:
 
 ```bash
 # .env
-NUXT_PUBLIC_SUPPRT_PROJECT_ID=your_project_id
+NUXT_PUBLIC_SUPPRT_PUBLIC_KEY=pk_xxx
 ```
 
 ## Composable
@@ -68,7 +68,7 @@ export function useSupprt() {
   function initialize(options: Partial<SupprtConfig> = {}) {
     if (import.meta.client) {
       init({
-        projectId: config.public.supprtProjectId,
+        publicKey: config.public.supprtPublicKey,
         ...options
       })
 
@@ -134,7 +134,7 @@ export function useSupprt() {
     destroy()
 
     const supprtConfig = {
-      projectId: config.public.supprtProjectId,
+      publicKey: config.public.supprtPublicKey,
       user: session.value?.user ? {
         id: session.value.user.id,
         email: session.value.user.email,
@@ -206,7 +206,7 @@ Create a Nuxt module for better DX:
 import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
 
 export interface ModuleOptions {
-  projectId: string
+  publicKey: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -215,13 +215,13 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'supprt'
   },
   defaults: {
-    projectId: ''
+    publicKey: ''
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
     // Add runtime config
-    nuxt.options.runtimeConfig.public.supprtProjectId = options.projectId
+    nuxt.options.runtimeConfig.public.supprtPublicKey = options.publicKey
 
     // Add plugin
     addPlugin(resolver.resolve('./runtime/plugin.client'))
@@ -235,7 +235,7 @@ Usage in `nuxt.config.ts`:
 export default defineNuxtConfig({
   modules: ['./modules/supprt'],
   supprt: {
-    projectId: 'YOUR_PROJECT_ID'
+    publicKey: 'pk_xxx'
   }
 })
 ```
@@ -256,7 +256,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     const shouldShow = supportPages.some(p => path.startsWith(p))
 
     if (shouldShow) {
-      init({ projectId: config.public.supprtProjectId })
+      init({ publicKey: config.public.supprtPublicKey })
     } else {
       destroy()
     }
@@ -268,6 +268,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 1. **Use `.client.ts`** suffix for client-only plugins
 2. **Check `import.meta.client`** for SSR safety
-3. **Use runtime config** for project ID
+3. **Use runtime config** for public key
 4. **Create composables** for reusable logic
 5. **Watch auth state** to reinitialize with user data

@@ -10,15 +10,15 @@ The primary color affects buttons, links, and accents:
 
 ```javascript
 init({
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   primaryColor: '#14b8a6' // Teal
 })
 ```
 
 ```html
 <script
-  src="https://cdn.supprt.io/widget.js"
-  data-project-id="YOUR_PROJECT_ID"
+  src="https://unpkg.com/@supprt/widget"
+  data-public-key="pk_xxx"
   data-primary-color="#14b8a6"
 ></script>
 ```
@@ -44,7 +44,7 @@ Place the widget in either bottom corner:
 
 ```javascript
 init({
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   position: 'bottom-right' // or 'bottom-left'
 })
 ```
@@ -62,27 +62,23 @@ Control the stacking order:
 
 ```javascript
 init({
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   zIndex: 999999 // Default
 })
 ```
 
 Use a higher value if the widget appears behind other elements.
 
-## Welcome Message
+## Locale
 
-Set a custom greeting:
+Set the UI language:
 
 ```javascript
 init({
-  projectId: 'YOUR_PROJECT_ID',
-  welcomeMessage: 'Hi there! 👋 How can we help you today?'
+  publicKey: 'pk_xxx',
+  locale: 'fr' // 'en', 'fr', 'es', 'de'
 })
 ```
-
-::: info
-The welcome message appears when a user opens the widget for the first time.
-:::
 
 ## Dark Mode
 
@@ -107,15 +103,15 @@ The widget uses Shadow DOM, which means:
 
 ```javascript
 init({
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
 
   // Appearance
   primaryColor: '#8b5cf6',
   position: 'bottom-right',
   zIndex: 999999,
 
-  // Content
-  welcomeMessage: 'Welcome! How can we assist you?',
+  // Localization
+  locale: 'en',
 
   // User (optional)
   user: {

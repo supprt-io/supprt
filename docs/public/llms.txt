@@ -45,7 +45,6 @@ interface SupprtConfig {
   publicKey: string
 
   // Optional
-  apiUrl?: string                              // Custom API URL
   position?: 'bottom-right' | 'bottom-left'    // Default: 'bottom-right'
   primaryColor?: string                        // Hex color, e.g. '#2a9d8f'
   zIndex?: number                              // CSS z-index for the widget
