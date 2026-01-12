@@ -1,51 +1,21 @@
-# @supprt/widget
+<p align="center">
+  <img src="https://supprt.io/logo.svg" alt="Supprt" width="80" height="80" />
+</p>
 
-[![npm version](https://img.shields.io/npm/v/@supprt/widget.svg)](https://www.npmjs.com/package/@supprt/widget)
-[![npm downloads](https://img.shields.io/npm/dm/@supprt/widget.svg)](https://www.npmjs.com/package/@supprt/widget)
-[![CI](https://github.com/supprt-io/supprt/actions/workflows/ci.yml/badge.svg)](https://github.com/supprt-io/supprt/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center">@supprt/widget</h1>
 
-Embeddable chat widget for customer support. Works with **any framework** - React, Vue, Svelte, Angular, Next.js, Nuxt, Astro, or vanilla JavaScript.
+<p align="center">
+  Embeddable chat widget for customer support.<br/>
+  Works with React, Vue, Svelte, Angular, Next.js, Nuxt, Astro, or vanilla JavaScript.
+</p>
 
-## Features
+<p align="center">
+  <a href="https://www.npmjs.com/package/@supprt/widget"><img src="https://img.shields.io/npm/v/@supprt/widget.svg" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@supprt/widget"><img src="https://img.shields.io/npm/dm/@supprt/widget.svg" alt="npm downloads" /></a>
+  <a href="https://github.com/supprt-io/supprt/actions/workflows/ci.yml"><img src="https://github.com/supprt-io/supprt/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
+</p>
 
-- **Framework Agnostic** - One package that works everywhere
-- **Fully Customizable** - Match your brand colors and position
-- **Style Isolation** - Shadow DOM for complete CSS isolation
-- **Lightweight** - Only ~14KB gzipped, no dependencies
-- **Multi-channel** - Route to Discord, Slack, or webhooks
-
-## Quick Start
-
-```bash
-npm install @supprt/widget
-```
-
-```javascript
-import { init } from '@supprt/widget'
-
-init({
-  publicKey: 'your-public-key'
-})
-```
-
-## Documentation
-
-For complete installation guides, API reference, and framework-specific examples:
-
-**[docs.supprt.io](https://docs.supprt.io)**
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-```bash
-git clone https://github.com/supprt-io/supprt.git
-cd supprt
-npm install
-npm run dev
-```
-
-## License
-
-MIT - see [LICENSE](LICENSE) for details.
+<p align="center">
+  <a href="https://docs.supprt.io"><strong>Get Started →</strong></a>
+</p>
