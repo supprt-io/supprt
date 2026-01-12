@@ -1,25 +1,34 @@
-import { Send } from 'lucide-preact'
+import { Paperclip, Send, X } from 'lucide-preact'
 import type { JSX } from 'preact'
 import { useRef, useState } from 'preact/hooks'
 import { useTranslation } from '../i18n'
 
 interface MessageInputProps {
-  onSend: (message: string) => void
+  onSend: (message: string, files?: File[]) => void
   isSending: boolean
   primaryColor: string
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export function MessageInput({ onSend, isSending, primaryColor }: MessageInputProps): JSX.Element {
   const t = useTranslation()
   const [message, setMessage] = useState('')
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = (e: Event) => {
     e.preventDefault()
     const trimmed = message.trim()
-    if (trimmed && !isSending) {
-      onSend(trimmed)
+    if ((trimmed || selectedFiles.length > 0) && !isSending) {
+      onSend(trimmed, selectedFiles.length > 0 ? selectedFiles : undefined)
       setMessage('')
+      setSelectedFiles([])
       inputRef.current?.focus()
     }
   }
@@ -31,30 +40,81 @@ export function MessageInput({ onSend, isSending, primaryColor }: MessageInputPr
     }
   }
 
+  const handleFileSelect = (e: Event) => {
+    const input = e.target as HTMLInputElement
+    if (input.files) {
+      setSelectedFiles((prev) => [...prev, ...Array.from(input.files!)])
+      input.value = '' // Reset input
+    }
+  }
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const canSend = (message.trim() || selectedFiles.length > 0) && !isSending
+
   return (
-    <form class="supprt-input" onSubmit={handleSubmit}>
-      <textarea
-        ref={inputRef}
-        class="supprt-input__textarea"
-        value={message}
-        onInput={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
-        onKeyDown={handleKeyDown}
-        placeholder={t.placeholder}
-        rows={1}
-        disabled={isSending}
-      />
-      <button
-        type="submit"
-        class="supprt-input__button"
-        disabled={!message.trim() || isSending}
-        style={{ backgroundColor: primaryColor }}
-      >
-        {isSending ? (
-          <div class="supprt-spinner supprt-spinner--small" />
-        ) : (
-          <Send size={20} aria-hidden="true" />
-        )}
-      </button>
-    </form>
+    <div class="supprt-input-container">
+      {selectedFiles.length > 0 && (
+        <div class="supprt-input__files">
+          {selectedFiles.map((file, index) => (
+            <div key={`${file.name}-${index}`} class="supprt-input__file">
+              <span class="supprt-input__file-name">{file.name}</span>
+              <span class="supprt-input__file-size">{formatFileSize(file.size)}</span>
+              <button
+                type="button"
+                class="supprt-input__file-remove"
+                onClick={() => removeFile(index)}
+                aria-label="Remove file"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <form class="supprt-input" onSubmit={handleSubmit}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          class="supprt-input__file-input"
+          onChange={handleFileSelect}
+          multiple
+          accept="image/*,.pdf,.doc,.docx,.txt"
+        />
+        <button
+          type="button"
+          class="supprt-input__attach-button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isSending}
+          aria-label="Attach file"
+        >
+          <Paperclip size={20} />
+        </button>
+        <textarea
+          ref={inputRef}
+          class="supprt-input__textarea"
+          value={message}
+          onInput={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t.placeholder}
+          rows={1}
+          disabled={isSending}
+        />
+        <button
+          type="submit"
+          class="supprt-input__button"
+          disabled={!canSend}
+          style={{ backgroundColor: primaryColor }}
+        >
+          {isSending ? (
+            <div class="supprt-spinner supprt-spinner--small" />
+          ) : (
+            <Send size={20} aria-hidden="true" />
+          )}
+        </button>
+      </form>
+    </div>
   )
 }

@@ -1,5 +1,24 @@
 import type { Conversation, InitResponse, Message } from './types'
 
+export interface UploadUrlResponse {
+  uploadUrl: string
+  key: string
+}
+
+export interface DownloadUrlResponse {
+  downloadUrl: string
+  filename: string
+  contentType: string
+  size: number
+}
+
+export interface AttachmentInput {
+  key: string
+  filename: string
+  contentType: string
+  size: number
+}
+
 export class SupprtApi {
   private baseUrl: string
   private publicKey: string
@@ -70,18 +89,53 @@ export class SupprtApi {
 
   async createConversation(
     content: string,
+    attachments?: AttachmentInput[],
   ): Promise<{ conversation: Conversation; message: Message }> {
     return this.request('/api/v1/conversations', {
       method: 'POST',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, attachments }),
     })
   }
 
-  async sendMessage(conversationId: string, content: string): Promise<{ message: Message }> {
+  async sendMessage(
+    conversationId: string,
+    content: string,
+    attachments?: AttachmentInput[],
+  ): Promise<{ message: Message }> {
     return this.request(`/api/v1/conversations/${conversationId}/messages`, {
       method: 'POST',
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, attachments }),
     })
+  }
+
+  async getUploadUrl(
+    conversationId: string,
+    filename: string,
+    contentType: string,
+    size: number,
+  ): Promise<UploadUrlResponse> {
+    return this.request(`/api/v1/conversations/${conversationId}/attachments/upload-url`, {
+      method: 'POST',
+      body: JSON.stringify({ filename, contentType, size }),
+    })
+  }
+
+  async getDownloadUrl(attachmentId: string): Promise<DownloadUrlResponse> {
+    return this.request(`/api/v1/attachments/${attachmentId}/download-url`)
+  }
+
+  async uploadFile(uploadUrl: string, file: File): Promise<void> {
+    const response = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status}`)
+    }
   }
 
   subscribeToConversation(
