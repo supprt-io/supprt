@@ -37,6 +37,7 @@ export interface Message {
   content: string
   senderType: 'user' | 'agent' | 'bot'
   senderName?: string
+  senderAvatarUrl?: string
   createdAt: string
   attachments?: Attachment[]
 }

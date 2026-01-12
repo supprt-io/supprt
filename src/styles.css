@@ -290,12 +290,25 @@
   align-self: flex-start;
 }
 
+.supprt-message__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  margin-bottom: 4px;
+}
+
+.supprt-message__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .supprt-message__sender {
   font-size: 12px;
   font-weight: 500;
   color: var(--supprt-gray-500);
-  margin-left: 12px;
-  margin-bottom: 2px;
 }
 
 .supprt-message__content {

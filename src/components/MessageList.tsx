@@ -50,8 +50,19 @@ export function MessageList({
           key={message.id}
           class={`supprt-message ${message.senderType === 'user' ? 'supprt-message--user' : 'supprt-message--agent'}`}
         >
-          {message.senderType !== 'user' && message.senderName && (
-            <span class="supprt-message__sender">{message.senderName}</span>
+          {message.senderType !== 'user' && (
+            <div class="supprt-message__header">
+              {message.senderAvatarUrl && (
+                <img
+                  src={message.senderAvatarUrl}
+                  alt=""
+                  class="supprt-message__avatar"
+                />
+              )}
+              {message.senderName && (
+                <span class="supprt-message__sender">{message.senderName}</span>
+              )}
+            </div>
           )}
           <div class="supprt-message__content">{message.content}</div>
           <span class="supprt-message__time">{formatTime(message.createdAt)}</span>
