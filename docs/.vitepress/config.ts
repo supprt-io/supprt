@@ -5,7 +5,7 @@ export default defineConfig({
   description: 'Customer support made simple. Embeddable chat widget for any website.',
 
   // For custom domain, remove base. For GitHub Pages without custom domain, use '/supprt/'
-  // base: '/supprt/',
+  base: '/supprt/',
 
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }],
