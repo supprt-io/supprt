@@ -84,19 +84,17 @@ if (typeof window !== 'undefined') {
 
   // Auto-init from script data attributes
   const initFromScript = () => {
-    const scripts = document.querySelectorAll('script[data-supprt-key]')
+    const scripts = document.querySelectorAll('script[data-public-key]')
     const script = scripts[scripts.length - 1] as HTMLScriptElement | null
 
     if (script) {
-      const publicKey = script.getAttribute('data-supprt-key')
-      const apiUrl = script.getAttribute('data-api-url')
+      const publicKey = script.getAttribute('data-public-key')
       const position = script.getAttribute('data-position') as 'bottom-right' | 'bottom-left' | null
-      const primaryColor = script.getAttribute('data-color')
+      const primaryColor = script.getAttribute('data-primary-color')
 
       if (publicKey) {
         init({
           publicKey,
-          apiUrl: apiUrl || undefined,
           position: position || undefined,
           primaryColor: primaryColor || undefined,
         })

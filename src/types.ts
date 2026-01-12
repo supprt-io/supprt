@@ -2,7 +2,6 @@ import type { SupportedLocale } from './i18n'
 
 export interface SupprtConfig {
   publicKey: string
-  apiUrl?: string
   user?: {
     id: string
     email?: string

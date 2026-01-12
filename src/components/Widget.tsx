@@ -33,9 +33,7 @@ export function Widget({ config }: WidgetProps): JSX.Element {
 
   const initializingRef = useRef(false)
 
-  const [api] = useState(
-    () => new SupprtApi(config.apiUrl || window.location.origin, config.publicKey),
-  )
+  const [api] = useState(() => new SupprtApi('https://api.supprt.io', config.publicKey))
 
   const primaryColor = config.primaryColor || state.project?.primaryColor || DEFAULT_PRIMARY_COLOR
   const position =
