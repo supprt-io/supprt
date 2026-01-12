@@ -4,8 +4,9 @@ export default defineConfig({
   title: 'Supprt',
   description: 'Customer support made simple. Embeddable chat widget for any website.',
 
-  // For custom domain, remove base. For GitHub Pages without custom domain, use '/supprt/'
-  base: '/supprt/',
+  // For custom domain (docs.supprt.io), base should be '/'
+  // For GitHub Pages without custom domain, use '/supprt/'
+  base: '/',
 
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }],
