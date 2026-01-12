@@ -10,7 +10,7 @@ export default defineConfig({
 
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }],
-    ['meta', { name: 'theme-color', content: '#14b8a6' }],
+    ['meta', { name: 'theme-color', content: '#2a9d8f' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'Supprt' }],
     ['meta', { property: 'og:title', content: 'Supprt - Customer support made simple' }],

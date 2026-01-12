@@ -1,0 +1,48 @@
+:root {
+  /* Supprt Brand Colors - Teal */
+  --vp-c-brand-1: #2a9d8f;
+  --vp-c-brand-2: #34b3a4;
+  --vp-c-brand-3: #3fc9b8;
+  --vp-c-brand-soft: rgba(42, 157, 143, 0.14);
+
+  /* Accent - Orange */
+  --vp-c-tip-1: #f97316;
+  --vp-c-tip-2: #fb923c;
+  --vp-c-tip-3: #fdba74;
+  --vp-c-tip-soft: rgba(249, 115, 22, 0.14);
+}
+
+.dark {
+  --vp-c-brand-1: #34b3a4;
+  --vp-c-brand-2: #3fc9b8;
+  --vp-c-brand-3: #4fd9c8;
+  --vp-c-brand-soft: rgba(52, 179, 164, 0.16);
+}
+
+/* Home hero brand gradient */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #2a9d8f 0%, #34b3a4 50%, #f97316 100%);
+}
+
+/* Button colors */
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: #fff;
+  --vp-button-brand-bg: #2a9d8f;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: #fff;
+  --vp-button-brand-hover-bg: #34b3a4;
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: #fff;
+  --vp-button-brand-active-bg: #238b7e;
+}
+
+/* Feature icon colors */
+.VPFeature .icon {
+  color: #2a9d8f;
+}
+
+.dark .VPFeature .icon {
+  color: #34b3a4;
+}
