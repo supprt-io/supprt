@@ -53,11 +53,7 @@ export function MessageList({
           {message.senderType !== 'user' && (
             <div class="supprt-message__header">
               {message.senderAvatarUrl && (
-                <img
-                  src={message.senderAvatarUrl}
-                  alt=""
-                  class="supprt-message__avatar"
-                />
+                <img src={message.senderAvatarUrl} alt="" class="supprt-message__avatar" />
               )}
               {message.senderName && (
                 <span class="supprt-message__sender">{message.senderName}</span>
