@@ -1,6 +1,6 @@
 {
   "name": "@supprt/widget",
-  "version": "0.0.0",
+  "version": "0.0.5",
   "description": "Embeddable chat widget for customer support. Works with React, Vue, Svelte, Angular, or vanilla JS.",
   "license": "MIT",
   "author": "Supprt <contact@supprt.io>",
