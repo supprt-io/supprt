@@ -7,6 +7,8 @@ export interface SupprtConfig {
     email?: string
     name?: string
     avatar?: string
+    /** Custom metadata to associate with this user (plan, company, version, etc.) */
+    metadata?: Record<string, unknown>
   }
   locale?: SupportedLocale
   position?: 'bottom-right' | 'bottom-left'

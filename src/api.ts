@@ -61,14 +61,26 @@ export class SupprtApi {
     email?: string
     name?: string
     avatar?: string
+    metadata?: Record<string, unknown>
   }): Promise<InitResponse> {
     const fingerprint = this.getFingerprint()
+
+    // Merge user metadata with widget version
+    const userWithVersion = user
+      ? {
+          ...user,
+          metadata: {
+            _widgetVersion: __WIDGET_VERSION__,
+            ...user.metadata,
+          },
+        }
+      : undefined
 
     const response = await this.request<InitResponse>('/api/v1/widget/init', {
       method: 'POST',
       body: JSON.stringify({
         publicKey: this.publicKey,
-        user,
+        user: userWithVersion,
         fingerprint: user ? undefined : fingerprint,
       }),
     })

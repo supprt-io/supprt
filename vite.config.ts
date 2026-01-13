@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
+import pkg from './package.json'
 
 export default defineConfig({
   plugins: [preact()],
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
+    __WIDGET_VERSION__: JSON.stringify(pkg.version),
   },
   build: {
     lib: {
