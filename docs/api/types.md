@@ -88,6 +88,12 @@ interface SupprtUser {
    * URL to user's avatar image.
    */
   avatar?: string
+
+  /**
+   * Custom metadata for additional context.
+   * Displayed to your support team in the dashboard.
+   */
+  metadata?: Record<string, unknown>
 }
 ```
 

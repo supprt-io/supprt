@@ -121,6 +121,7 @@ interface SupprtUser {
   email?: string
   name?: string
   avatar?: string
+  metadata?: Record<string, unknown>
 }
 ```
 
@@ -151,6 +152,32 @@ The user's display name. Shown to your support team.
 - **Required:** No
 
 URL to the user's avatar image.
+
+### metadata
+
+- **Type:** `Record<string, unknown>`
+- **Required:** No
+
+Custom key-value pairs for additional user context. This data is displayed to your support team in the dashboard.
+
+```javascript
+init({
+  publicKey: 'pk_xxx',
+  user: {
+    id: 'user_123',
+    email: 'john@example.com',
+    metadata: {
+      plan: 'pro',
+      company: 'Acme Inc',
+      signupDate: '2024-01-15'
+    }
+  }
+})
+```
+
+::: tip Widget Version
+The widget automatically includes `_widgetVersion` in metadata to help your team debug version-specific issues.
+:::
 
 ## Data Attributes
 
@@ -190,7 +217,12 @@ init({
     id: 'user_123',
     email: 'john@example.com',
     name: 'John Doe',
-    avatar: 'https://example.com/avatar.jpg'
+    avatar: 'https://example.com/avatar.jpg',
+    metadata: {
+      plan: 'pro',
+      company: 'Acme Inc',
+      role: 'admin'
+    }
   }
 })
 ```

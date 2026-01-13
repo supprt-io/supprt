@@ -49,6 +49,7 @@ init({
 | `email` | string | No | User's email address |
 | `name` | string | No | User's display name |
 | `avatar` | string | No | URL to user's avatar image |
+| `metadata` | object | No | Custom key-value pairs for context |
 
 ## Best Practices
 
@@ -85,6 +86,64 @@ user: {
   id: 'user_123'
 }
 ```
+
+## Custom Metadata
+
+Use metadata to provide additional context to your support team. This data is displayed in the dashboard alongside user information.
+
+### Common Use Cases
+
+```javascript
+// SaaS Application
+user: {
+  id: 'user_123',
+  email: 'john@example.com',
+  metadata: {
+    plan: 'pro',
+    company: 'Acme Inc',
+    role: 'admin',
+    trialEndsAt: '2024-02-15'
+  }
+}
+
+// E-commerce
+user: {
+  id: 'user_123',
+  metadata: {
+    orderCount: 5,
+    lastOrderId: 'ord_abc123',
+    lifetimeValue: 499.99,
+    preferredCurrency: 'EUR'
+  }
+}
+
+// Mobile App
+user: {
+  id: 'user_123',
+  metadata: {
+    appVersion: '2.1.0',
+    platform: 'ios',
+    deviceModel: 'iPhone 15',
+    osVersion: '17.2'
+  }
+}
+```
+
+### Widget Version
+
+The widget automatically includes `_widgetVersion` in metadata. This helps your team identify version-specific issues:
+
+```json
+{
+  "_widgetVersion": "1.2.0",
+  "plan": "pro",
+  "company": "Acme Inc"
+}
+```
+
+::: tip
+Metadata is merged with the automatic widget version, so you don't need to include it yourself.
+:::
 
 ### Handle Authentication Changes
 
