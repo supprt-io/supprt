@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/supprt-io/supprt/compare/v0.0.6...v0.0.7) (2026-01-13)
+
+
+### Features
+
+* add user metadata support with automatic version tracking ([e9fecc9](https://github.com/supprt-io/supprt/commit/e9fecc9f22cc1d01c39e74c2fc3823ea07a4872a))
+
 ## [0.0.6](https://github.com/supprt-io/supprt/compare/0.0.5...v0.0.6) (2026-01-12)
 
 
