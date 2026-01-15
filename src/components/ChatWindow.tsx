@@ -1,4 +1,6 @@
+import { Paperclip } from 'lucide-preact'
 import type { JSX } from 'preact'
+import { useCallback, useRef, useState } from 'preact/hooks'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import type { ConnectionStatus, UploadProgress } from '../hooks/useWidget'
 import { useTranslation } from '../i18n'
@@ -30,6 +32,7 @@ interface ChatWindowProps {
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   onSendMessage: (message: string, files?: File[]) => void
+  onTyping?: (isTyping: boolean) => void
   onDownloadAttachment: (attachmentId: string) => Promise<string>
   onClose: () => void
   onSelectConversation: (conversation: Conversation) => void
@@ -58,6 +61,7 @@ export function ChatWindow({
   primaryColor,
   position,
   onSendMessage,
+  onTyping,
   onDownloadAttachment,
   onClose,
   onSelectConversation,
@@ -68,6 +72,53 @@ export function ChatWindow({
 }: ChatWindowProps): JSX.Element | null {
   const t = useTranslation()
   const focusTrapRef = useFocusTrap(isOpen, onClose)
+  const windowRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [droppedFiles, setDroppedFiles] = useState<File[]>([])
+
+  const handleDragEnter = useCallback((e: DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragOver = useCallback((e: DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleDragLeave = useCallback((e: DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // Check if we're leaving the window entirely
+    const rect = windowRef.current?.getBoundingClientRect()
+    if (rect) {
+      const { clientX, clientY } = e
+      if (
+        clientX <= rect.left ||
+        clientX >= rect.right ||
+        clientY <= rect.top ||
+        clientY >= rect.bottom
+      ) {
+        setIsDragging(false)
+      }
+    }
+  }, [])
+
+  const handleDrop = useCallback((e: DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const files = e.dataTransfer?.files
+    if (!files || files.length === 0) return
+
+    setDroppedFiles(Array.from(files))
+  }, [])
+
+  const handleExternalFilesProcessed = useCallback(() => {
+    setDroppedFiles([])
+  }, [])
 
   if (!isOpen) return null
 
@@ -75,14 +126,36 @@ export function ChatWindow({
   const showBackButton = activeConversation || (isComposing && conversations.length > 0)
   const isConversationClosed = activeConversation?.status === 'closed'
 
+  // Combine refs
+  const setRefs = (el: HTMLDivElement | null) => {
+    windowRef.current = el
+    // focusTrapRef is a ref object from useFocusTrap
+    ;(focusTrapRef as { current: HTMLDivElement | null }).current = el
+  }
+
   return (
     // biome-ignore lint/a11y/useSemanticElements: div required for styling and ref attachment
     <div
-      ref={focusTrapRef}
-      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''}`}
+      ref={setRefs}
+      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''} ${isDragging ? 'supprt-window--dragging' : ''}`}
       role="region"
       aria-label={project?.name || t.support}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
+      {isDragging && (
+        <div class="supprt-window__drop-overlay">
+          <div class="supprt-window__drop-icon" style={{ backgroundColor: `${primaryColor}15` }}>
+            <Paperclip size={36} style={{ color: primaryColor }} />
+          </div>
+          <span class="supprt-window__drop-text" style={{ color: primaryColor }}>
+            Drop files here
+          </span>
+          <span class="supprt-window__drop-hint">Files will be attached to your message</span>
+        </div>
+      )}
       {connectionStatus === 'offline' && (
         // biome-ignore lint/a11y/useSemanticElements: output not appropriate for status banner
         <div class="supprt-connection-banner supprt-connection-banner--offline" role="status">
@@ -144,9 +217,12 @@ export function ChatWindow({
             ) : (
               <MessageInput
                 onSend={onSendMessage}
+                onTyping={onTyping}
                 isSending={isSending}
                 uploadProgress={uploadProgress}
                 primaryColor={primaryColor}
+                externalFiles={droppedFiles}
+                onExternalFilesProcessed={handleExternalFilesProcessed}
               />
             )}
           </>

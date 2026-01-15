@@ -44,6 +44,7 @@ export interface UseWidgetReturn {
     loadConversation: (conversation: Conversation) => Promise<void>
     loadMoreMessages: () => Promise<void>
     sendMessage: (content: string, files?: File[]) => Promise<void>
+    setTyping: (isTyping: boolean) => void
     downloadAttachment: (attachmentId: string) => Promise<string>
     clearError: () => void
     retry: () => void
@@ -78,7 +79,6 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   const [hasMoreMessages, setHasMoreMessages] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [initFailed, setInitFailed] = useState<InitFailureReason>(null)
-  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const initializingRef = useRef(false)
   const processingQueueRef = useRef(false)
   // Set for O(1) message duplicate checks
@@ -114,6 +114,17 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
     try {
       const response = await api.init(config.user)
+
+      // Connect WebSocket after initialization
+      api.connectSocket()
+
+      // Set up connection status handler
+      api.onConnectionChange((status) => {
+        if (navigator.onLine) {
+          setConnectionStatus(status)
+        }
+      })
+
       setState((s) => ({
         ...s,
         isLoading: false,
@@ -169,6 +180,13 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   // Load a conversation's messages
   const loadConversation = useCallback(
     async (conversation: Conversation) => {
+      // Leave previous conversation room if any
+      if (state.activeConversation) {
+        api.leaveConversation(state.activeConversation.id)
+      }
+      // Join new conversation room
+      api.joinConversation(conversation.id)
+
       setIsComposing(false)
       setHasMoreMessages(false)
       setState((s) => ({
@@ -210,7 +228,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         }))
       }
     },
-    [api],
+    [api, state.activeConversation],
   )
 
   // Load more messages (pagination)
@@ -308,6 +326,9 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         } else {
           // New conversation: create first, then upload files if any
           const response = await api.createConversation(content)
+          // Join the new conversation room
+          api.joinConversation(response.conversation.id)
+
           const newMessage: Message = {
             ...response.message,
             senderType: 'user',
@@ -373,6 +394,16 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     [isOnline, sendMessageInternal],
   )
 
+  // Set typing status via WebSocket
+  const setTyping = useCallback(
+    (isTyping: boolean) => {
+      if (!api || !state.activeConversation) return
+      // Fire and forget via WebSocket
+      api.setTyping(state.activeConversation.id, isTyping)
+    },
+    [api, state.activeConversation],
+  )
+
   // Process queued messages when back online
   const processQueue = useCallback(async () => {
     if (processingQueueRef.current || queuedMessages.length === 0) return
@@ -400,8 +431,12 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
   // Close the widget
   const closeWindow = useCallback(() => {
+    // Stop typing indicator when closing
+    if (state.activeConversation) {
+      api.setTyping(state.activeConversation.id, false)
+    }
     setState((s) => ({ ...s, isOpen: false }))
-  }, [])
+  }, [api, state.activeConversation])
 
   // Start composing a new conversation
   const startNewConversation = useCallback(() => {
@@ -415,6 +450,11 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
   // Go back to conversation list
   const backToList = useCallback(() => {
+    // Stop typing indicator and leave room when going back
+    if (state.activeConversation) {
+      api.setTyping(state.activeConversation.id, false)
+      api.leaveConversation(state.activeConversation.id)
+    }
     setIsComposing(false)
     setHasMoreMessages(false)
     messageIdsRef.current.clear()
@@ -439,7 +479,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         conversations: updatedConversations,
       }
     })
-  }, [])
+  }, [api, state.activeConversation])
 
   // Clear error
   const clearError = useCallback(() => {
@@ -498,7 +538,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     }
   }, [state.isInitialized, initialize])
 
-  // Subscribe to real-time updates via SSE
+  // Subscribe to real-time updates via WebSocket
   useEffect(() => {
     if (!state.isInitialized) {
       return
@@ -513,10 +553,6 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
         // Clear typing indicator when a new message arrives
         setIsAgentTyping(false)
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current)
-          typingTimeoutRef.current = null
-        }
 
         // O(1) duplicate check using Set
         if (messageIdsRef.current.has(data.message.id)) {
@@ -574,33 +610,18 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         // Errors handled via connection status
       },
       (typingData) => {
-        // Handle typing indicator events
-        if (typingData.isTyping && typingData.conversationId === state.activeConversation?.id) {
-          setIsAgentTyping(true)
-          // Auto-clear after 5 seconds
-          if (typingTimeoutRef.current) {
-            clearTimeout(typingTimeoutRef.current)
-          }
-          typingTimeoutRef.current = setTimeout(() => {
-            setIsAgentTyping(false)
-          }, 5000)
-        } else if (!typingData.isTyping) {
-          setIsAgentTyping(false)
-        }
-      },
-      (status) => {
-        // Handle connection status changes (but don't override offline)
-        if (navigator.onLine) {
-          setConnectionStatus(status)
+        // Handle typing indicator events (only from integrations, not from self/widget)
+        if (
+          typingData.source !== 'widget' &&
+          typingData.conversationId === state.activeConversation?.id
+        ) {
+          setIsAgentTyping(typingData.isTyping)
         }
       },
     )
 
     return () => {
       unsubscribe()
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current)
-      }
     }
   }, [api, state.isInitialized, state.activeConversation?.id])
 
@@ -626,6 +647,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       loadConversation,
       loadMoreMessages,
       sendMessage,
+      setTyping,
       downloadAttachment,
       clearError,
       retry,

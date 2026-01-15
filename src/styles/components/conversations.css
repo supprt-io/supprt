@@ -116,6 +116,13 @@
   white-space: nowrap;
 }
 
+.supprt-conversation-item__attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--supprt-gray-500);
+}
+
 .supprt-conversation-item__meta {
   display: flex;
   align-items: center;

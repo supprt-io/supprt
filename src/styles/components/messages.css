@@ -126,11 +126,25 @@
 .supprt-message__images {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+}
+
+.supprt-message__images--with-content {
+  margin-top: 10px;
 }
 
 /* File attachments */
+.supprt-message__files {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.supprt-message__files--with-content {
+  margin-top: 10px;
+}
+
+/* Legacy class for backwards compatibility */
 .supprt-message__attachments {
   display: flex;
   flex-direction: column;
@@ -141,22 +155,21 @@
 .supprt-attachment {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: white;
+  gap: 5px;
+  padding: 5px 8px;
+  background: var(--supprt-gray-100);
   border-radius: var(--supprt-radius-sm);
   color: var(--supprt-gray-600);
   text-decoration: none;
-  font-size: 13px;
-  border: 1px solid var(--supprt-gray-200);
+  font-size: 11px;
+  border: none;
   transition: all 0.2s;
   cursor: pointer;
   font-family: inherit;
 }
 
 .supprt-attachment:hover:not(:disabled) {
-  background: var(--supprt-gray-50);
-  border-color: var(--supprt-gray-300);
+  background: var(--supprt-gray-200);
 }
 
 .supprt-attachment:disabled {
@@ -164,11 +177,26 @@
   cursor: not-allowed;
 }
 
+/* User bubble attachment style */
+.supprt-attachment--user {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.supprt-attachment--user:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.supprt-attachment--user .supprt-attachment__icon {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 .supprt-attachment__name {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 120px;
 }
 
 .supprt-attachment__icon {

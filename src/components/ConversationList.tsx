@@ -1,8 +1,37 @@
-import { CircleAlert, Plus } from 'lucide-preact'
+import { CircleAlert, Paperclip, Plus } from 'lucide-preact'
 import type { JSX } from 'preact'
 import { useTranslation } from '../i18n'
 import type { Conversation } from '../types'
 import { formatRelativeDate } from '../utils/date'
+
+function getLastMessagePreview(
+  conversation: Conversation,
+  noMessagesText: string,
+): JSX.Element | string {
+  const lastMessage = conversation.lastMessage
+  if (!lastMessage) return noMessagesText
+
+  // If there's text content, show it
+  if (lastMessage.content?.trim()) {
+    return lastMessage.content
+  }
+
+  // If there are attachments but no content, show attachment info
+  if (lastMessage.attachments && lastMessage.attachments.length > 0) {
+    const count = lastMessage.attachments.length
+    const firstFile = lastMessage.attachments[0]
+    const isImage = firstFile.contentType.startsWith('image/')
+
+    return (
+      <span class="supprt-conversation-item__attachment">
+        <Paperclip size={12} />
+        {count === 1 ? (isImage ? 'Image' : firstFile.filename) : `${count} files`}
+      </span>
+    )
+  }
+
+  return noMessagesText
+}
 
 interface ConversationListProps {
   conversations: Conversation[]
@@ -57,7 +86,7 @@ function ConversationItem({ conversation, onSelect }: ConversationItemProps): JS
     >
       <div class="supprt-conversation-item__content">
         <span class="supprt-conversation-item__preview">
-          {conversation.lastMessage?.content || t.noMessages}
+          {getLastMessagePreview(conversation, t.noMessages)}
         </span>
         <div class="supprt-conversation-item__meta">
           {isClosed && <span class="supprt-conversation-item__badge">{t.resolved}</span>}

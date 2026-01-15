@@ -138,6 +138,9 @@ function MessageBubble({
   const fileAttachments =
     message.attachments?.filter((att) => !att.contentType.startsWith('image/')) || []
 
+  const hasContent = message.content && message.content.trim().length > 0
+  const hasAttachments = imageAttachments.length > 0 || fileAttachments.length > 0
+
   return (
     <div class={`supprt-message ${isUser ? 'supprt-message--user' : 'supprt-message--agent'}`}>
       {isUser ? (
@@ -150,36 +153,47 @@ function MessageBubble({
           {message.senderName && <span class="supprt-message__sender">{message.senderName}</span>}
         </div>
       )}
-      {message.content && (
+
+      {/* Message bubble containing content and/or attachments */}
+      {(hasContent || hasAttachments) && (
         <div
           class="supprt-message__content"
           style={isUser ? { backgroundColor: primaryColor } : undefined}
         >
-          <Markdown content={message.content} />
-        </div>
-      )}
+          {hasContent && <Markdown content={message.content} />}
 
-      {/* Image attachments displayed as inline previews */}
-      {imageAttachments.length > 0 && (
-        <div class="supprt-message__images">
-          {imageAttachments.map((att) => (
-            <ImageAttachment key={att.id} attachment={att} onDownload={onDownloadAttachment} />
-          ))}
+          {/* Image attachments displayed as inline previews */}
+          {imageAttachments.length > 0 && (
+            <div
+              class={`supprt-message__images ${hasContent ? 'supprt-message__images--with-content' : ''}`}
+            >
+              {imageAttachments.map((att) => (
+                <ImageAttachment key={att.id} attachment={att} onDownload={onDownloadAttachment} />
+              ))}
+            </div>
+          )}
+
+          {/* File attachments displayed as download links */}
+          {fileAttachments.length > 0 && (
+            <div
+              class={`supprt-message__files ${hasContent || imageAttachments.length > 0 ? 'supprt-message__files--with-content' : ''}`}
+            >
+              {fileAttachments.map((att) => (
+                <AttachmentItem
+                  key={att.id}
+                  attachment={att}
+                  onDownload={onDownloadAttachment}
+                  isInUserBubble={isUser}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       <time class="supprt-message__time" dateTime={message.createdAt}>
         {formatTime(message.createdAt)}
       </time>
-
-      {/* File attachments displayed as download links */}
-      {fileAttachments.length > 0 && (
-        <div class="supprt-message__attachments">
-          {fileAttachments.map((att) => (
-            <AttachmentItem key={att.id} attachment={att} onDownload={onDownloadAttachment} />
-          ))}
-        </div>
-      )}
     </div>
   )
 }

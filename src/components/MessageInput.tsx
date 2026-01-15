@@ -1,14 +1,17 @@
 import { Paperclip, Send, X } from 'lucide-preact'
 import type { JSX } from 'preact'
-import { useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import type { UploadProgress } from '../hooks/useWidget'
 import { useTranslation } from '../i18n'
 
 interface MessageInputProps {
   onSend: (message: string, files?: File[]) => void
+  onTyping?: (isTyping: boolean) => void
   isSending: boolean
   uploadProgress: UploadProgress | null
   primaryColor: string
+  externalFiles?: File[]
+  onExternalFilesProcessed?: () => void
 }
 
 function formatFileSize(bytes: number): string {
@@ -19,24 +22,77 @@ function formatFileSize(bytes: number): string {
 
 export function MessageInput({
   onSend,
+  onTyping,
   isSending,
   uploadProgress,
   primaryColor,
+  externalFiles,
+  onExternalFilesProcessed,
 }: MessageInputProps): JSX.Element {
   const t = useTranslation()
   const [message, setMessage] = useState('')
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const isTypingRef = useRef(false)
+  const onTypingRef = useRef(onTyping)
+
+  // Keep onTyping ref up to date
+  useEffect(() => {
+    onTypingRef.current = onTyping
+  }, [onTyping])
+
+  // Handle external files from parent drag and drop
+  useEffect(() => {
+    if (externalFiles && externalFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...externalFiles])
+      onExternalFilesProcessed?.()
+    }
+  }, [externalFiles, onExternalFilesProcessed])
+
+  // Send stop typing when unmounting
+  useEffect(() => {
+    return () => {
+      if (isTypingRef.current && onTypingRef.current) {
+        onTypingRef.current(false)
+      }
+    }
+  }, [])
+
+  const handleTypingChange = useCallback(
+    (typing: boolean) => {
+      if (!onTyping) return
+
+      // Only emit if state changed
+      if (typing !== isTypingRef.current) {
+        isTypingRef.current = typing
+        onTyping(typing)
+      }
+    },
+    [onTyping],
+  )
 
   const handleSubmit = (e: Event) => {
     e.preventDefault()
     const trimmed = message.trim()
     if ((trimmed || selectedFiles.length > 0) && !isSending) {
+      // Stop typing indicator when sending
+      handleTypingChange(false)
       onSend(trimmed, selectedFiles.length > 0 ? selectedFiles : undefined)
       setMessage('')
       setSelectedFiles([])
       inputRef.current?.focus()
+    }
+  }
+
+  const handleInput = (e: Event) => {
+    const value = (e.target as HTMLTextAreaElement).value
+    setMessage(value)
+    // Trigger typing indicator when user types
+    if (value.trim()) {
+      handleTypingChange(true)
+    } else {
+      handleTypingChange(false)
     }
   }
 
@@ -124,7 +180,7 @@ export function MessageInput({
           ref={inputRef}
           class="supprt-input__textarea"
           value={message}
-          onInput={(e) => setMessage((e.target as HTMLTextAreaElement).value)}
+          onInput={handleInput}
           onKeyDown={handleKeyDown}
           placeholder={t.placeholder}
           rows={1}

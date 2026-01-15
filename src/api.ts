@@ -1,178 +1,5 @@
+import { io, type Socket } from 'socket.io-client'
 import type { Conversation, InitResponse, Message } from './types'
-
-/**
- * Fetch-based SSE client that supports Authorization headers.
- * Native EventSource doesn't support custom headers, which would
- * expose the token in the URL (visible in browser history/logs).
- *
- * Features:
- * - Automatic reconnection with exponential backoff
- * - Configurable max retries and delays
- */
-class SecureSSE {
-  private controller: AbortController | null = null
-  private listeners: Map<string, ((data: string) => void)[]> = new Map()
-  private errorHandler: ((error: Error) => void) | null = null
-  private reconnectHandler: ((attempt: number, delay: number) => void) | null = null
-  private connectedHandler: (() => void) | null = null
-
-  // Reconnection state
-  private retryCount = 0
-  private isClosedManually = false
-  private reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null
-
-  // Reconnection config
-  private readonly maxRetries = 10
-  private readonly baseDelay = 1000 // 1 second
-  private readonly maxDelay = 30000 // 30 seconds
-
-  constructor(
-    private url: string,
-    private token: string,
-  ) {}
-
-  addEventListener(event: string, handler: (data: string) => void): void {
-    const handlers = this.listeners.get(event) || []
-    handlers.push(handler)
-    this.listeners.set(event, handlers)
-  }
-
-  onError(handler: (error: Error) => void): void {
-    this.errorHandler = handler
-  }
-
-  onReconnecting(handler: (attempt: number, delay: number) => void): void {
-    this.reconnectHandler = handler
-  }
-
-  onConnected(handler: () => void): void {
-    this.connectedHandler = handler
-  }
-
-  private getReconnectDelay(): number {
-    // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s (capped)
-    const delay = Math.min(this.baseDelay * 2 ** this.retryCount, this.maxDelay)
-    // Add jitter (±20%) to prevent thundering herd
-    const jitter = delay * 0.2 * (Math.random() - 0.5)
-    return Math.round(delay + jitter)
-  }
-
-  private scheduleReconnect(): void {
-    if (this.isClosedManually || this.retryCount >= this.maxRetries) {
-      if (this.retryCount >= this.maxRetries) {
-        this.errorHandler?.(new Error('Max reconnection attempts reached'))
-      }
-      return
-    }
-
-    const delay = this.getReconnectDelay()
-    this.retryCount++
-
-    this.reconnectHandler?.(this.retryCount, delay)
-
-    this.reconnectTimeoutId = setTimeout(() => {
-      this.reconnectTimeoutId = null
-      this.connect()
-    }, delay)
-  }
-
-  async connect(): Promise<void> {
-    this.controller = new AbortController()
-
-    try {
-      const response = await fetch(this.url, {
-        method: 'GET',
-        headers: {
-          Accept: 'text/event-stream',
-          Authorization: `Bearer ${this.token}`,
-          'Cache-Control': 'no-cache',
-        },
-        signal: this.controller.signal,
-      })
-
-      if (!response.ok) {
-        throw new Error(`SSE connection failed: ${response.status}`)
-      }
-
-      if (!response.body) {
-        throw new Error('SSE response body is null')
-      }
-
-      // Connection successful - reset retry count
-      this.retryCount = 0
-      this.connectedHandler?.()
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-
-        if (done) {
-          // Connection closed by server - attempt reconnect
-          if (!this.isClosedManually) {
-            this.scheduleReconnect()
-          }
-          break
-        }
-
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-
-        // Keep the last incomplete line in the buffer
-        buffer = lines.pop() || ''
-
-        let currentEvent = 'message'
-        let currentData = ''
-
-        for (const line of lines) {
-          if (line.startsWith('event:')) {
-            currentEvent = line.slice(6).trim()
-          } else if (line.startsWith('data:')) {
-            currentData = line.slice(5).trim()
-          } else if (line === '' && currentData) {
-            // Empty line = end of event
-            const handlers = this.listeners.get(currentEvent)
-            if (handlers) {
-              for (const handler of handlers) {
-                handler(currentData)
-              }
-            }
-            currentEvent = 'message'
-            currentData = ''
-          }
-        }
-      }
-    } catch (error) {
-      if ((error as Error).name === 'AbortError') {
-        // Manually aborted - don't reconnect
-        return
-      }
-
-      // Network error or other failure - attempt reconnect
-      this.errorHandler?.(error as Error)
-
-      if (!this.isClosedManually) {
-        this.scheduleReconnect()
-      }
-    }
-  }
-
-  close(): void {
-    this.isClosedManually = true
-
-    if (this.reconnectTimeoutId) {
-      clearTimeout(this.reconnectTimeoutId)
-      this.reconnectTimeoutId = null
-    }
-
-    this.controller?.abort()
-    this.controller = null
-    this.listeners.clear()
-    this.retryCount = 0
-  }
-}
 
 export interface UploadUrlResponse {
   uploadUrl: string
@@ -197,6 +24,10 @@ export class SupprtApi {
   private baseUrl: string
   private publicKey: string
   private token: string | null = null
+  private socket: Socket | null = null
+  private connectionChangeHandler:
+    | ((status: 'connected' | 'reconnecting' | 'disconnected') => void)
+    | null = null
 
   constructor(baseUrl: string, publicKey: string) {
     this.baseUrl = baseUrl.replace(/\/$/, '')
@@ -205,6 +36,106 @@ export class SupprtApi {
 
   setToken(token: string) {
     this.token = token
+  }
+
+  /**
+   * Connect to the WebSocket server for real-time updates.
+   * Must be called after init() when token is available.
+   */
+  connectSocket(): void {
+    if (!this.token) {
+      console.error('[Supprt] Cannot connect socket: no token')
+      return
+    }
+
+    if (this.socket?.connected) {
+      return
+    }
+
+    this.socket = io(this.baseUrl, {
+      auth: {
+        clientType: 'widget',
+        token: this.token,
+      },
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 30000,
+    })
+
+    this.socket.on('connect', () => {
+      console.log('[Supprt] Socket connected')
+      this.connectionChangeHandler?.('connected')
+    })
+
+    this.socket.on('disconnect', (reason) => {
+      console.log('[Supprt] Socket disconnected:', reason)
+      if (reason === 'io server disconnect') {
+        // Server closed the connection, won't auto-reconnect
+        this.connectionChangeHandler?.('disconnected')
+      }
+    })
+
+    this.socket.on('connect_error', (error) => {
+      console.error('[Supprt] Socket connection error:', error.message)
+    })
+
+    this.socket.io.on('reconnect_attempt', () => {
+      this.connectionChangeHandler?.('reconnecting')
+    })
+
+    this.socket.io.on('reconnect_failed', () => {
+      this.connectionChangeHandler?.('disconnected')
+    })
+  }
+
+  /**
+   * Disconnect from the WebSocket server.
+   */
+  disconnectSocket(): void {
+    if (this.socket) {
+      // Typing indicator will be cleared server-side on disconnect
+      this.socket.disconnect()
+      this.socket = null
+    }
+  }
+
+  /**
+   * Get the socket instance for direct event handling.
+   */
+  getSocket(): Socket | null {
+    return this.socket
+  }
+
+  /**
+   * Join a conversation room to receive updates.
+   */
+  joinConversation(conversationId: string): void {
+    this.socket?.emit('join', `conversation:${conversationId}`)
+  }
+
+  /**
+   * Leave a conversation room.
+   */
+  leaveConversation(conversationId: string): void {
+    this.socket?.emit('leave', `conversation:${conversationId}`)
+  }
+
+  /**
+   * Send typing indicator via WebSocket.
+   */
+  setTyping(conversationId: string, isTyping: boolean): void {
+    this.socket?.emit('typing', { conversationId, isTyping })
+  }
+
+  /**
+   * Set handler for connection status changes.
+   */
+  onConnectionChange(
+    handler: (status: 'connected' | 'reconnecting' | 'disconnected') => void,
+  ): void {
+    this.connectionChangeHandler = handler
   }
 
   private async request<T>(
@@ -323,6 +254,8 @@ export class SupprtApi {
     })
   }
 
+  // NOTE: setTyping is now handled via WebSocket (see setTyping method above)
+
   async getUploadUrl(
     conversationId: string,
     filename: string,
@@ -385,112 +318,73 @@ export class SupprtApi {
     })
   }
 
-  subscribeToConversation(
-    conversationId: string,
-    onMessage: (message: Message) => void,
-    onConversationUpdate?: (update: { status: string }) => void,
-    onError?: (error: Error) => void,
-  ): () => void {
-    if (!this.token) {
-      onError?.(new Error('Not authenticated'))
-      return () => {}
-    }
-
-    const url = `${this.baseUrl}/api/v1/conversations/${conversationId}/sse`
-    const sse = new SecureSSE(url, this.token)
-
-    sse.addEventListener('message', (data) => {
-      try {
-        const message = JSON.parse(data)
-        onMessage(message)
-      } catch {
-        // Ignore parse errors
-      }
-    })
-
-    sse.addEventListener('conversation', (data) => {
-      try {
-        const update = JSON.parse(data)
-        onConversationUpdate?.(update)
-      } catch {
-        // Ignore parse errors
-      }
-    })
-
-    sse.addEventListener('connected', () => {
-      console.log('[Supprt] SSE connected')
-    })
-
-    sse.onError((error) => {
-      onError?.(error)
-    })
-
-    sse.connect()
-
-    return () => sse.close()
-  }
-
-  // Global SSE subscription for all user's conversations
+  /**
+   * Subscribe to real-time updates via WebSocket.
+   * Uses unified Gateway event format.
+   */
   subscribeToUpdates(
     onMessage: (data: { conversationId: string; message: Message }) => void,
     onConversationUpdate?: (update: { conversationId: string; status: string }) => void,
     onError?: (error: Error) => void,
-    onTyping?: (data: { conversationId: string; isTyping: boolean }) => void,
-    onConnectionChange?: (status: 'connected' | 'reconnecting' | 'disconnected') => void,
+    onTyping?: (data: { conversationId: string; isTyping: boolean; source: string }) => void,
   ): () => void {
-    if (!this.token) {
-      onError?.(new Error('Not authenticated'))
+    if (!this.socket) {
+      onError?.(new Error('Socket not connected'))
       return () => {}
     }
 
-    const url = `${this.baseUrl}/api/v1/sse`
-    const sse = new SecureSSE(url, this.token)
-
-    sse.addEventListener('message', (data) => {
-      try {
-        const parsed = JSON.parse(data)
-        onMessage(parsed)
-      } catch {
-        // Ignore parse errors
+    // Unified event handler for all Gateway events
+    const eventHandler = (event: {
+      id: string
+      type: string
+      timestamp: string
+      source: { clientType: string; clientId?: string; integrationKind?: string }
+      payload: Record<string, unknown>
+    }) => {
+      switch (event.type) {
+        case 'message.created': {
+          const payload = event.payload as {
+            conversationId: string
+            message: Message
+          }
+          onMessage({
+            conversationId: payload.conversationId,
+            message: payload.message,
+          })
+          break
+        }
+        case 'conversation.status': {
+          const payload = event.payload as {
+            conversationId: string
+            status: string
+          }
+          onConversationUpdate?.({
+            conversationId: payload.conversationId,
+            status: payload.status,
+          })
+          break
+        }
+        case 'typing': {
+          const payload = event.payload as {
+            conversationId: string
+            isTyping: boolean
+          }
+          onTyping?.({
+            conversationId: payload.conversationId,
+            isTyping: payload.isTyping,
+            source: event.source.integrationKind ?? event.source.clientType,
+          })
+          break
+        }
       }
-    })
+    }
 
-    sse.addEventListener('conversation', (data) => {
-      try {
-        const update = JSON.parse(data)
-        onConversationUpdate?.(update)
-      } catch {
-        // Ignore parse errors
-      }
-    })
+    this.socket.on('event', eventHandler)
 
-    sse.addEventListener('typing', (data) => {
-      try {
-        const parsed = JSON.parse(data)
-        onTyping?.(parsed)
-      } catch {
-        // Ignore parse errors
-      }
-    })
-
-    sse.onConnected(() => {
-      onConnectionChange?.('connected')
-    })
-
-    sse.onReconnecting(() => {
-      onConnectionChange?.('reconnecting')
-    })
-
-    sse.onError((error) => {
-      if (error.message === 'Max reconnection attempts reached') {
-        onConnectionChange?.('disconnected')
-      }
-      onError?.(error)
-    })
-
-    sse.connect()
-
-    return () => sse.close()
+    // Return cleanup function
+    return () => {
+      this.socket?.off('event', eventHandler)
+    }
   }
 
   private getFingerprint(): string {

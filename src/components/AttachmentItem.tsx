@@ -6,9 +6,14 @@ import type { Attachment } from '../types'
 interface AttachmentItemProps {
   attachment: Attachment
   onDownload?: (attachmentId: string) => Promise<string>
+  isInUserBubble?: boolean
 }
 
-export function AttachmentItem({ attachment, onDownload }: AttachmentItemProps): JSX.Element {
+export function AttachmentItem({
+  attachment,
+  onDownload,
+  isInUserBubble = false,
+}: AttachmentItemProps): JSX.Element {
   const [isDownloading, setIsDownloading] = useState(false)
 
   const handleDownload = async () => {
@@ -27,7 +32,7 @@ export function AttachmentItem({ attachment, onDownload }: AttachmentItemProps):
   return (
     <button
       type="button"
-      class="supprt-attachment"
+      class={`supprt-attachment ${isInUserBubble ? 'supprt-attachment--user' : ''}`}
       onClick={handleDownload}
       disabled={isDownloading || !onDownload}
     >

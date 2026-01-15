@@ -56,6 +56,7 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           primaryColor={primaryColor}
           position={position}
           onSendMessage={actions.sendMessage}
+          onTyping={actions.setTyping}
           onDownloadAttachment={actions.downloadAttachment}
           onClose={actions.closeWindow}
           onSelectConversation={actions.loadConversation}

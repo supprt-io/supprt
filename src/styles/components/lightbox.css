@@ -3,17 +3,16 @@
  */
 
 .supprt-image-preview {
-  max-width: 220px;
-  border-radius: var(--supprt-radius-md);
+  max-width: 120px;
+  border-radius: var(--supprt-radius-sm);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s var(--supprt-ease-out);
-  box-shadow: var(--supprt-shadow-sm);
 }
 
 .supprt-image-preview--loading {
-  width: 180px;
-  height: 120px;
+  width: 100px;
+  height: 70px;
   background: linear-gradient(
     90deg,
     var(--supprt-gray-100) 25%,
