@@ -27,6 +27,9 @@ export const en: Translations = {
   failedToInitialize: 'Failed to initialize',
   failedToLoadMessages: 'Failed to load messages',
   failedToSendMessage: 'Failed to send message',
+  errorTitle: 'Something went wrong',
+  errorDescription: 'We encountered an issue. Please try again.',
+  tryAgain: 'Try again',
 
   // Actions
   dismiss: 'Dismiss',

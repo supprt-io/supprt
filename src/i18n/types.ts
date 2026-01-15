@@ -27,6 +27,9 @@ export interface Translations {
   failedToInitialize: string
   failedToLoadMessages: string
   failedToSendMessage: string
+  errorTitle: string
+  errorDescription: string
+  tryAgain: string
 
   // Actions
   dismiss: string

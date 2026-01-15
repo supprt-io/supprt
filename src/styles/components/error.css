@@ -75,3 +75,59 @@
   border-bottom: 1px solid var(--supprt-gray-200);
   color: var(--supprt-gray-600);
 }
+
+/**
+ * Error state - Full screen error display
+ */
+
+.supprt-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  flex: 1;
+}
+
+.supprt-error-state__icon {
+  color: var(--supprt-gray-400);
+  margin-bottom: 16px;
+}
+
+.supprt-error-state__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--supprt-gray-900);
+  margin-bottom: 8px;
+}
+
+.supprt-error-state__description {
+  font-size: 14px;
+  color: var(--supprt-gray-500);
+  margin-bottom: 24px;
+  max-width: 240px;
+}
+
+.supprt-error-state__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--supprt-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.supprt-error-state__button:hover {
+  opacity: 0.9;
+}
+
+.supprt-error-state__button:active {
+  opacity: 0.8;
+}

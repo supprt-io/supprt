@@ -46,6 +46,7 @@ export interface UseWidgetReturn {
     sendMessage: (content: string, files?: File[]) => Promise<void>
     downloadAttachment: (attachmentId: string) => Promise<string>
     clearError: () => void
+    retry: () => void
   }
 }
 
@@ -445,6 +446,13 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     setState((s) => ({ ...s, error: null }))
   }, [])
 
+  // Retry initialization
+  const retry = useCallback(() => {
+    initializingRef.current = false
+    setState((s) => ({ ...s, error: null, isInitialized: false }))
+    initialize()
+  }, [initialize])
+
   // Download an attachment
   const downloadAttachment = useCallback(
     async (attachmentId: string): Promise<string> => {
@@ -620,6 +628,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       sendMessage,
       downloadAttachment,
       clearError,
+      retry,
     },
   }
 }

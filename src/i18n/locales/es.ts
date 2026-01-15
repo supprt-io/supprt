@@ -27,6 +27,9 @@ export const es: Translations = {
   failedToInitialize: 'Error al inicializar',
   failedToLoadMessages: 'Error al cargar los mensajes',
   failedToSendMessage: 'Error al enviar el mensaje',
+  errorTitle: 'Algo salió mal',
+  errorDescription: 'Encontramos un problema. Por favor, inténtalo de nuevo.',
+  tryAgain: 'Reintentar',
 
   // Actions
   dismiss: 'Cerrar',

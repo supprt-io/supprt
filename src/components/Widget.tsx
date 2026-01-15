@@ -61,8 +61,8 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           onSelectConversation={actions.loadConversation}
           onNewConversation={actions.startNewConversation}
           onBackToList={actions.backToList}
-          onClearError={actions.clearError}
           onLoadMore={actions.loadMoreMessages}
+          onRetry={actions.retry}
         />
 
         <ChatBubble

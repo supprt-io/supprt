@@ -7,6 +7,7 @@ import { Branding } from './Branding'
 import { ChatHeader } from './ChatHeader'
 import { ConversationClosed } from './ConversationClosed'
 import { ConversationList } from './ConversationList'
+import { ErrorState } from './ErrorState'
 import { MessageInput } from './MessageInput'
 import { MessageList } from './MessageList'
 
@@ -34,8 +35,8 @@ interface ChatWindowProps {
   onSelectConversation: (conversation: Conversation) => void
   onNewConversation: () => void
   onBackToList: () => void
-  onClearError: () => void
   onLoadMore: () => void
+  onRetry: () => void
 }
 
 export function ChatWindow({
@@ -62,8 +63,8 @@ export function ChatWindow({
   onSelectConversation,
   onNewConversation,
   onBackToList,
-  onClearError,
   onLoadMore,
+  onRetry,
 }: ChatWindowProps): JSX.Element | null {
   const t = useTranslation()
   const focusTrapRef = useFocusTrap(isOpen, onClose)
@@ -103,29 +104,6 @@ export function ChatWindow({
           <span>{t.disconnected}</span>
         </div>
       )}
-      {error && (
-        <div class="supprt-error-banner" role="alert">
-          <span class="supprt-error-banner__message">{error}</span>
-          <button
-            type="button"
-            class="supprt-error-banner__close"
-            onClick={onClearError}
-            aria-label={t.dismiss}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <title>{t.dismiss}</title>
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      )}
       <ChatHeader
         title={project?.name || t.support}
         primaryColor={primaryColor}
@@ -135,7 +113,9 @@ export function ChatWindow({
       />
 
       <div class="supprt-body">
-        {showConversationList ? (
+        {error ? (
+          <ErrorState onRetry={onRetry} primaryColor={primaryColor} />
+        ) : showConversationList ? (
           <ConversationList
             conversations={conversations}
             primaryColor={primaryColor}

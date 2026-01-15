@@ -27,6 +27,9 @@ export const de: Translations = {
   failedToInitialize: 'Initialisierung fehlgeschlagen',
   failedToLoadMessages: 'Nachrichten konnten nicht geladen werden',
   failedToSendMessage: 'Nachricht konnte nicht gesendet werden',
+  errorTitle: 'Etwas ist schief gelaufen',
+  errorDescription: 'Es ist ein Problem aufgetreten. Bitte versuchen Sie es erneut.',
+  tryAgain: 'Erneut versuchen',
 
   // Actions
   dismiss: 'Schliessen',
