@@ -14,6 +14,8 @@ export interface UploadProgress {
 
 export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected' | 'offline'
 
+export type InitFailureReason = 'invalid_key' | 'server_unreachable' | null
+
 export interface QueuedMessage {
   content: string
   files?: File[]
@@ -33,6 +35,7 @@ export interface UseWidgetReturn {
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   translations: ReturnType<typeof getTranslations>
+  initFailed: InitFailureReason
   actions: {
     toggleOpen: () => void
     closeWindow: () => void
@@ -73,6 +76,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   )
   const [hasMoreMessages, setHasMoreMessages] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [initFailed, setInitFailed] = useState<InitFailureReason>(null)
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const initializingRef = useRef(false)
   const processingQueueRef = useRef(false)
@@ -120,10 +124,43 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       }))
     } catch (error) {
       initializingRef.current = false
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize'
+
+      // Determine failure reason based on error type
+      const isInvalidKey =
+        errorMessage.includes('401') ||
+        errorMessage.includes('403') ||
+        errorMessage.includes('Invalid') ||
+        errorMessage.includes('invalid') ||
+        errorMessage.includes('not found') ||
+        errorMessage.includes('Project not found')
+
+      const isServerUnreachable =
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('NetworkError') ||
+        errorMessage.includes('timed out') ||
+        errorMessage.includes('Network request failed')
+
+      if (isInvalidKey) {
+        setInitFailed('invalid_key')
+        console.warn(
+          '[Supprt] Widget not loaded: Invalid or revoked API key. Please check your publicKey configuration.',
+        )
+      } else if (isServerUnreachable) {
+        setInitFailed('server_unreachable')
+        console.warn(
+          '[Supprt] Widget not loaded: Unable to reach the server. Please check your network connection or API URL.',
+        )
+      } else {
+        // For other errors, still set as failed but with generic message
+        setInitFailed('server_unreachable')
+        console.warn(`[Supprt] Widget not loaded: ${errorMessage}`)
+      }
+
       setState((s) => ({
         ...s,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to initialize',
+        error: errorMessage,
       }))
     }
   }, [api, config.user])
@@ -572,6 +609,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     primaryColor,
     position,
     translations,
+    initFailed,
     actions: {
       toggleOpen,
       closeWindow,

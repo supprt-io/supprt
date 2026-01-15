@@ -9,7 +9,7 @@ interface WidgetProps {
   config: SupprtConfig
 }
 
-export function Widget({ config }: WidgetProps): JSX.Element {
+export function Widget({ config }: WidgetProps): JSX.Element | null {
   const {
     state,
     isComposing,
@@ -22,8 +22,14 @@ export function Widget({ config }: WidgetProps): JSX.Element {
     primaryColor,
     position,
     translations,
+    initFailed,
     actions,
   } = useWidget(config)
+
+  // Don't render anything if initialization failed
+  if (initFailed) {
+    return null
+  }
 
   // Count unread conversations
   const unreadCount = state.conversations.filter((c) => c.hasUnread).length
