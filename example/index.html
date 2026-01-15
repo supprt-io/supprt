@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supprt Widget - Playground</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .field input[type="text"],
+    .field input[type="number"],
+    .field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1e293b;
+      background: #f8fafc;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: #14b8a6;
+      background: white;
+    }
+
+    .field input::placeholder {
+      color: #94a3b8;
+    }
+
+    .color-field {
+      display: flex;
+      gap: 10px;
+    }
+
+    .color-field input[type="color"] {
+      width: 44px;
+      height: 44px;
+      padding: 2px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: white;
+    }
+
+    .color-field input[type="text"] {
+      flex: 1;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checkbox-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-field input {
+      width: 18px;
+      height: 18px;
+      accent-color: #14b8a6;
+    }
+
+    .checkbox-field span {
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #14b8a6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0d9488;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      margin-top: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+    }
+
+    .status-text {
+      font-size: 13px;
+      color: #166534;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .radio-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .radio-field input {
+      accent-color: #14b8a6;
+    }
+
+    .status-prod {
+      background: #fef3c7;
+    }
+
+    .status-prod .status-dot {
+      background: #f59e0b;
+    }
+
+    .status-prod .status-text {
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Supprt Widget Playground</h1>
+    <p class="subtitle">Configure and test the widget</p>
+
+    <!-- API Selection -->
+    <div class="card">
+      <div class="card-title">API</div>
+      <div class="field">
+        <div class="row">
+          <label class="radio-field">
+            <input type="radio" name="apiMode" value="mock" checked>
+            <span>Mock Server</span>
+          </label>
+          <label class="radio-field">
+            <input type="radio" name="apiMode" value="production">
+            <span>Production</span>
+          </label>
+        </div>
+      </div>
+      <div class="field" id="customApiField" style="display: none;">
+        <label>Custom API URL</label>
+        <input type="text" id="customApiUrl" placeholder="https://api.supprt.io">
+      </div>
+      <div id="statusMock" class="status">
+        <span class="status-dot"></span>
+        <span class="status-text">Using mock server (localhost:3333)</span>
+      </div>
+      <div id="statusProd" class="status status-prod" style="display: none;">
+        <span class="status-dot"></span>
+        <span class="status-text">Using production API</span>
+      </div>
+    </div>
+
+    <!-- Widget Config -->
+    <div class="card">
+      <div class="card-title">Widget Configuration</div>
+
+      <div class="field">
+        <label>Public Key</label>
+        <input type="text" id="publicKey" value="pk_demo_12345" placeholder="pk_xxx">
+        <p class="hint" id="publicKeyHint">Use any key for mock server</p>
+      </div>
+
+      <div class="field">
+        <label>Primary Color</label>
+        <div class="color-field">
+          <input type="color" id="colorPicker" value="#14b8a6">
+          <input type="text" id="colorText" value="#14b8a6" placeholder="#14b8a6">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Position</label>
+          <select id="position">
+            <option value="bottom-right">Bottom Right</option>
+            <option value="bottom-left">Bottom Left</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Locale</label>
+          <select id="locale">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Z-Index</label>
+        <input type="number" id="zIndex" value="9999" placeholder="9999">
+      </div>
+    </div>
+
+    <!-- User Identification -->
+    <div class="card">
+      <div class="card-title">User Identification</div>
+
+      <label class="checkbox-field">
+        <input type="checkbox" id="enableUser">
+        <span>Identify user</span>
+      </label>
+
+      <div id="userFields" style="display: none; margin-top: 14px;">
+        <div class="field">
+          <label>User ID</label>
+          <input type="text" id="userId" placeholder="user_123">
+        </div>
+
+        <div class="field">
+          <label>Name</label>
+          <input type="text" id="userName" placeholder="John Doe">
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="text" id="userEmail" placeholder="john@example.com">
+        </div>
+
+        <div class="field">
+          <label>Avatar URL</label>
+          <input type="text" id="userAvatar" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label>Metadata (JSON)</label>
+          <input type="text" id="userMetadata" placeholder='{"company": "Acme"}'>
+          <p class="hint">Custom data like company, source, version...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card">
+      <button class="btn btn-primary" onclick="applyConfig()">Apply Configuration</button>
+      <button class="btn btn-secondary" onclick="destroyWidget()">Destroy Widget</button>
+    </div>
+  </div>
+
+  <script src="/supprt.js"></script>
+  <script>
+    // API mode handling
+    const apiModeRadios = document.querySelectorAll('input[name="apiMode"]')
+    const statusMock = document.getElementById('statusMock')
+    const statusProd = document.getElementById('statusProd')
+    const publicKeyHint = document.getElementById('publicKeyHint')
+
+    function getApiUrl() {
+      const mode = document.querySelector('input[name="apiMode"]:checked').value
+      if (mode === 'mock') {
+        return 'http://localhost:3333'
+      }
+      return 'https://api.supprt.io'
+    }
+
+    function updateApiModeUI() {
+      const mode = document.querySelector('input[name="apiMode"]:checked').value
+      const isMock = mode === 'mock'
+      statusMock.style.display = isMock ? 'flex' : 'none'
+      statusProd.style.display = isMock ? 'none' : 'flex'
+      publicKeyHint.style.display = isMock ? 'block' : 'none'
+    }
+
+    apiModeRadios.forEach(radio => {
+      radio.addEventListener('change', updateApiModeUI)
+    })
+
+    // Sync color inputs
+    const colorPicker = document.getElementById('colorPicker')
+    const colorText = document.getElementById('colorText')
+
+    colorPicker.addEventListener('input', (e) => {
+      colorText.value = e.target.value
+    })
+
+    colorText.addEventListener('input', (e) => {
+      if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+        colorPicker.value = e.target.value
+      }
+    })
+
+    // Toggle user fields
+    const enableUser = document.getElementById('enableUser')
+    const userFields = document.getElementById('userFields')
+
+    enableUser.addEventListener('change', (e) => {
+      userFields.style.display = e.target.checked ? 'block' : 'none'
+    })
+
+    // Build config from form
+    function getConfig() {
+      const config = {
+        publicKey: document.getElementById('publicKey').value || 'pk_demo_12345',
+        apiUrl: getApiUrl(),
+        primaryColor: colorText.value,
+        position: document.getElementById('position').value,
+        locale: document.getElementById('locale').value,
+        zIndex: parseInt(document.getElementById('zIndex').value) || 9999,
+      }
+
+      if (enableUser.checked) {
+        const userId = document.getElementById('userId').value
+        if (userId) {
+          config.user = {
+            id: userId,
+          }
+
+          const name = document.getElementById('userName').value
+          const email = document.getElementById('userEmail').value
+          const avatar = document.getElementById('userAvatar').value
+          const metadataStr = document.getElementById('userMetadata').value
+
+          if (name) config.user.name = name
+          if (email) config.user.email = email
+          if (avatar) config.user.avatar = avatar
+
+          if (metadataStr) {
+            try {
+              config.user.metadata = JSON.parse(metadataStr)
+            } catch (e) {
+              console.warn('Invalid metadata JSON')
+            }
+          }
+        }
+      }
+
+      return config
+    }
+
+    // Apply configuration
+    function applyConfig() {
+      window.Supprt.destroy()
+      window.Supprt.init(getConfig())
+    }
+
+    // Destroy widget
+    function destroyWidget() {
+      window.Supprt.destroy()
+    }
+
+    // Initialize on load
+    window.Supprt.init(getConfig())
+  </script>
+</body>
+</html>

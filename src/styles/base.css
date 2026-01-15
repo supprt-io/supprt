@@ -1,0 +1,31 @@
+/**
+ * Base styles - Reset and widget container
+ */
+
+.supprt-widget {
+  font-family: var(--supprt-font);
+  font-size: 14px;
+  line-height: 1.5;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.supprt-widget *,
+.supprt-widget *::before,
+.supprt-widget *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Text selection */
+.supprt-widget {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.supprt-message__content {
+  -webkit-user-select: text;
+  user-select: text;
+}

@@ -13,7 +13,7 @@ Supprt is a lightweight customer support solution that lets your website visitor
 
 1. **Visitor** opens the chat widget on your website
 2. **Message** is sent to Supprt's API
-3. **Notification** appears in your Discord server, Slack workspace, or webhook
+3. **Notification** appears in your Discord server, Slack workspace, or AI handles it
 4. **Your team** responds directly from Discord/Slack
 5. **Response** appears in the visitor's chat widget
 
@@ -28,7 +28,7 @@ Add a single script tag or npm package. No complex setup, no backend required.
 Receive and respond to messages where your team already works:
 - **Discord** - Get messages in a channel, reply in threads
 - **Slack** - Native Slack integration with thread support
-- **Webhooks** - Connect to any system with custom webhooks
+- **AI** - Let AI automatically respond to your customers
 
 ### Customizable
 
@@ -66,7 +66,7 @@ Supprt consists of three main components:
 |-----------|-------------|
 | **Widget** | Embeddable JavaScript that renders the chat UI |
 | **API** | Backend that handles messages and routing |
-| **Integrations** | Discord bot, Slack app, and webhook handlers |
+| **Integrations** | Discord bot, Slack app, and AI handlers |
 
 The widget is completely standalone and framework-agnostic. It uses:
 - **Preact** for the UI (bundled, not a peer dependency)

@@ -1,0 +1,52 @@
+/**
+ * Closed conversation state
+ */
+
+.supprt-closed {
+  padding: 32px 24px;
+  text-align: center;
+  background: white;
+  border-top: 1px solid var(--supprt-gray-100);
+}
+
+.supprt-closed__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--supprt-radius-full);
+  background: var(--supprt-success-light);
+  color: var(--supprt-success);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.supprt-closed__text {
+  font-size: 14px;
+  color: var(--supprt-gray-600);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.supprt-closed__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--supprt-radius-full);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--supprt-shadow-sm);
+}
+
+.supprt-closed__button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--supprt-shadow-md);
+}

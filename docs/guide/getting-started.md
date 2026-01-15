@@ -7,7 +7,7 @@ This guide will help you add Supprt to your website in under 5 minutes.
 Before you begin, you'll need:
 
 1. A Supprt account ([sign up here](https://app.supprt.io))
-2. A project with at least one integration (Discord, Slack, or Webhook)
+2. A project with at least one integration (Discord, Slack, or AI)
 3. Your project's **Public Key** (found in project settings)
 
 ## Step 1: Create a Project
@@ -31,10 +31,10 @@ Connect at least one channel to receive messages:
 2. Click **Add to Slack** to install the app
 3. Select a channel for receiving messages
 
-### Webhook
-1. Go to **Integrations** → **Add Integration** → **Webhook**
-2. Enter your webhook URL
-3. Configure the payload format
+### AI
+1. Go to **Integrations** → **Add Integration** → **AI**
+2. Configure your AI preferences
+3. Let AI automatically respond to your customers
 
 ## Step 3: Install the Widget
 

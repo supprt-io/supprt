@@ -1,6 +1,6 @@
 import { render } from 'preact'
 import { Widget } from './components/Widget'
-import styles from './styles.css?inline'
+import styles from './styles/index.css?inline'
 import type { SupprtConfig } from './types'
 
 export type { SupprtConfig }

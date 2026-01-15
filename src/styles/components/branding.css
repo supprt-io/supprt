@@ -1,0 +1,30 @@
+/**
+ * Powered by branding
+ */
+
+.supprt-branding {
+  padding: 10px 20px;
+  background: white;
+  border-top: 1px solid var(--supprt-gray-100);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.supprt-branding__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--supprt-gray-400);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.supprt-branding__link:hover {
+  color: var(--supprt-gray-600);
+}
+
+.supprt-branding__link strong {
+  font-weight: 600;
+  color: inherit;
+}

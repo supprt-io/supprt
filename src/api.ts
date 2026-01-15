@@ -1,5 +1,179 @@
 import type { Conversation, InitResponse, Message } from './types'
 
+/**
+ * Fetch-based SSE client that supports Authorization headers.
+ * Native EventSource doesn't support custom headers, which would
+ * expose the token in the URL (visible in browser history/logs).
+ *
+ * Features:
+ * - Automatic reconnection with exponential backoff
+ * - Configurable max retries and delays
+ */
+class SecureSSE {
+  private controller: AbortController | null = null
+  private listeners: Map<string, ((data: string) => void)[]> = new Map()
+  private errorHandler: ((error: Error) => void) | null = null
+  private reconnectHandler: ((attempt: number, delay: number) => void) | null = null
+  private connectedHandler: (() => void) | null = null
+
+  // Reconnection state
+  private retryCount = 0
+  private isClosedManually = false
+  private reconnectTimeoutId: ReturnType<typeof setTimeout> | null = null
+
+  // Reconnection config
+  private readonly maxRetries = 10
+  private readonly baseDelay = 1000 // 1 second
+  private readonly maxDelay = 30000 // 30 seconds
+
+  constructor(
+    private url: string,
+    private token: string,
+  ) {}
+
+  addEventListener(event: string, handler: (data: string) => void): void {
+    const handlers = this.listeners.get(event) || []
+    handlers.push(handler)
+    this.listeners.set(event, handlers)
+  }
+
+  onError(handler: (error: Error) => void): void {
+    this.errorHandler = handler
+  }
+
+  onReconnecting(handler: (attempt: number, delay: number) => void): void {
+    this.reconnectHandler = handler
+  }
+
+  onConnected(handler: () => void): void {
+    this.connectedHandler = handler
+  }
+
+  private getReconnectDelay(): number {
+    // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s (capped)
+    const delay = Math.min(this.baseDelay * 2 ** this.retryCount, this.maxDelay)
+    // Add jitter (±20%) to prevent thundering herd
+    const jitter = delay * 0.2 * (Math.random() - 0.5)
+    return Math.round(delay + jitter)
+  }
+
+  private scheduleReconnect(): void {
+    if (this.isClosedManually || this.retryCount >= this.maxRetries) {
+      if (this.retryCount >= this.maxRetries) {
+        this.errorHandler?.(new Error('Max reconnection attempts reached'))
+      }
+      return
+    }
+
+    const delay = this.getReconnectDelay()
+    this.retryCount++
+
+    this.reconnectHandler?.(this.retryCount, delay)
+
+    this.reconnectTimeoutId = setTimeout(() => {
+      this.reconnectTimeoutId = null
+      this.connect()
+    }, delay)
+  }
+
+  async connect(): Promise<void> {
+    this.controller = new AbortController()
+
+    try {
+      const response = await fetch(this.url, {
+        method: 'GET',
+        headers: {
+          Accept: 'text/event-stream',
+          Authorization: `Bearer ${this.token}`,
+          'Cache-Control': 'no-cache',
+        },
+        signal: this.controller.signal,
+      })
+
+      if (!response.ok) {
+        throw new Error(`SSE connection failed: ${response.status}`)
+      }
+
+      if (!response.body) {
+        throw new Error('SSE response body is null')
+      }
+
+      // Connection successful - reset retry count
+      this.retryCount = 0
+      this.connectedHandler?.()
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+
+        if (done) {
+          // Connection closed by server - attempt reconnect
+          if (!this.isClosedManually) {
+            this.scheduleReconnect()
+          }
+          break
+        }
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+
+        // Keep the last incomplete line in the buffer
+        buffer = lines.pop() || ''
+
+        let currentEvent = 'message'
+        let currentData = ''
+
+        for (const line of lines) {
+          if (line.startsWith('event:')) {
+            currentEvent = line.slice(6).trim()
+          } else if (line.startsWith('data:')) {
+            currentData = line.slice(5).trim()
+          } else if (line === '' && currentData) {
+            // Empty line = end of event
+            const handlers = this.listeners.get(currentEvent)
+            if (handlers) {
+              for (const handler of handlers) {
+                handler(currentData)
+              }
+            }
+            currentEvent = 'message'
+            currentData = ''
+          }
+        }
+      }
+    } catch (error) {
+      if ((error as Error).name === 'AbortError') {
+        // Manually aborted - don't reconnect
+        return
+      }
+
+      // Network error or other failure - attempt reconnect
+      this.errorHandler?.(error as Error)
+
+      if (!this.isClosedManually) {
+        this.scheduleReconnect()
+      }
+    }
+  }
+
+  close(): void {
+    this.isClosedManually = true
+
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId)
+      this.reconnectTimeoutId = null
+    }
+
+    this.controller?.abort()
+    this.controller = null
+    this.listeners.clear()
+    this.retryCount = 0
+  }
+}
+
 export interface UploadUrlResponse {
   uploadUrl: string
   key: string
@@ -33,27 +207,44 @@ export class SupprtApi {
     this.token = token
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    timeout = 15000,
+  ): Promise<T> {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options.headers as Record<string, string>),
+      }
+
+      if (this.token) {
+        headers.Authorization = `Bearer ${this.token}`
+      }
+
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      })
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.error || `Request failed: ${response.status}`)
+      }
+
+      return response.json()
+    } catch (error) {
+      if ((error as Error).name === 'AbortError') {
+        throw new Error('Request timed out')
+      }
+      throw error
+    } finally {
+      clearTimeout(timeoutId)
     }
-
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`
-    }
-
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-    })
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}))
-      throw new Error(error.error || `Request failed: ${response.status}`)
-    }
-
-    return response.json()
   }
 
   async init(user?: {
@@ -136,18 +327,50 @@ export class SupprtApi {
     return this.request(`/api/v1/attachments/${attachmentId}/download-url`)
   }
 
-  async uploadFile(uploadUrl: string, file: File): Promise<void> {
-    const response = await fetch(uploadUrl, {
-      method: 'PUT',
-      body: file,
-      headers: {
-        'Content-Type': file.type,
-      },
-    })
+  async uploadFile(
+    uploadUrl: string,
+    file: File,
+    onProgress?: (progress: number) => void,
+    timeout = 60000,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      const timeoutId = setTimeout(() => {
+        xhr.abort()
+        reject(new Error('Upload timed out'))
+      }, timeout)
 
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.status}`)
-    }
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const progress = Math.round((event.loaded / event.total) * 100)
+          onProgress(progress)
+        }
+      })
+
+      xhr.addEventListener('load', () => {
+        clearTimeout(timeoutId)
+        if (xhr.status >= 200 && xhr.status < 300) {
+          onProgress?.(100)
+          resolve()
+        } else {
+          reject(new Error(`Upload failed: ${xhr.status}`))
+        }
+      })
+
+      xhr.addEventListener('error', () => {
+        clearTimeout(timeoutId)
+        reject(new Error('Upload failed'))
+      })
+
+      xhr.addEventListener('abort', () => {
+        clearTimeout(timeoutId)
+        reject(new Error('Upload cancelled'))
+      })
+
+      xhr.open('PUT', uploadUrl)
+      xhr.setRequestHeader('Content-Type', file.type)
+      xhr.send(file)
+    })
   }
 
   subscribeToConversation(
@@ -161,36 +384,38 @@ export class SupprtApi {
       return () => {}
     }
 
-    const url = `${this.baseUrl}/api/v1/conversations/${conversationId}/sse?token=${encodeURIComponent(this.token)}`
-    const eventSource = new EventSource(url)
+    const url = `${this.baseUrl}/api/v1/conversations/${conversationId}/sse`
+    const sse = new SecureSSE(url, this.token)
 
-    eventSource.addEventListener('message', (event) => {
+    sse.addEventListener('message', (data) => {
       try {
-        const message = JSON.parse(event.data)
+        const message = JSON.parse(data)
         onMessage(message)
       } catch {
         // Ignore parse errors
       }
     })
 
-    eventSource.addEventListener('conversation', (event) => {
+    sse.addEventListener('conversation', (data) => {
       try {
-        const update = JSON.parse(event.data)
+        const update = JSON.parse(data)
         onConversationUpdate?.(update)
       } catch {
         // Ignore parse errors
       }
     })
 
-    eventSource.addEventListener('connected', () => {
+    sse.addEventListener('connected', () => {
       console.log('[Supprt] SSE connected')
     })
 
-    eventSource.onerror = () => {
-      onError?.(new Error('Connection lost'))
-    }
+    sse.onError((error) => {
+      onError?.(error)
+    })
 
-    return () => eventSource.close()
+    sse.connect()
+
+    return () => sse.close()
   }
 
   // Global SSE subscription for all user's conversations
@@ -198,42 +423,62 @@ export class SupprtApi {
     onMessage: (data: { conversationId: string; message: Message }) => void,
     onConversationUpdate?: (update: { conversationId: string; status: string }) => void,
     onError?: (error: Error) => void,
+    onTyping?: (data: { conversationId: string; isTyping: boolean }) => void,
+    onConnectionChange?: (status: 'connected' | 'reconnecting' | 'disconnected') => void,
   ): () => void {
     if (!this.token) {
       onError?.(new Error('Not authenticated'))
       return () => {}
     }
 
-    const url = `${this.baseUrl}/api/v1/sse?token=${encodeURIComponent(this.token)}`
-    const eventSource = new EventSource(url)
+    const url = `${this.baseUrl}/api/v1/sse`
+    const sse = new SecureSSE(url, this.token)
 
-    eventSource.addEventListener('message', (event) => {
+    sse.addEventListener('message', (data) => {
       try {
-        const data = JSON.parse(event.data)
-        onMessage(data)
+        const parsed = JSON.parse(data)
+        onMessage(parsed)
       } catch {
         // Ignore parse errors
       }
     })
 
-    eventSource.addEventListener('conversation', (event) => {
+    sse.addEventListener('conversation', (data) => {
       try {
-        const update = JSON.parse(event.data)
+        const update = JSON.parse(data)
         onConversationUpdate?.(update)
       } catch {
         // Ignore parse errors
       }
     })
 
-    eventSource.addEventListener('connected', () => {
-      console.log('[Supprt] Global SSE connected')
+    sse.addEventListener('typing', (data) => {
+      try {
+        const parsed = JSON.parse(data)
+        onTyping?.(parsed)
+      } catch {
+        // Ignore parse errors
+      }
     })
 
-    eventSource.onerror = () => {
-      onError?.(new Error('Connection lost'))
-    }
+    sse.onConnected(() => {
+      onConnectionChange?.('connected')
+    })
 
-    return () => eventSource.close()
+    sse.onReconnecting(() => {
+      onConnectionChange?.('reconnecting')
+    })
+
+    sse.onError((error) => {
+      if (error.message === 'Max reconnection attempts reached') {
+        onConnectionChange?.('disconnected')
+      }
+      onError?.(error)
+    })
+
+    sse.connect()
+
+    return () => sse.close()
   }
 
   private getFingerprint(): string {

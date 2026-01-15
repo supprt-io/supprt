@@ -1,11 +1,13 @@
 import { Paperclip, Send, X } from 'lucide-preact'
 import type { JSX } from 'preact'
 import { useRef, useState } from 'preact/hooks'
+import type { UploadProgress } from '../hooks/useWidget'
 import { useTranslation } from '../i18n'
 
 interface MessageInputProps {
   onSend: (message: string, files?: File[]) => void
   isSending: boolean
+  uploadProgress: UploadProgress | null
   primaryColor: string
 }
 
@@ -15,7 +17,12 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-export function MessageInput({ onSend, isSending, primaryColor }: MessageInputProps): JSX.Element {
+export function MessageInput({
+  onSend,
+  isSending,
+  uploadProgress,
+  primaryColor,
+}: MessageInputProps): JSX.Element {
   const t = useTranslation()
   const [message, setMessage] = useState('')
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
@@ -56,6 +63,27 @@ export function MessageInput({ onSend, isSending, primaryColor }: MessageInputPr
 
   return (
     <div class="supprt-input-container">
+      {uploadProgress && (
+        <div
+          class="supprt-upload-progress"
+          role="progressbar"
+          aria-valuenow={uploadProgress.progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          tabIndex={-1}
+        >
+          <div class="supprt-upload-progress__info">
+            <span class="supprt-upload-progress__filename">{uploadProgress.filename}</span>
+            <span class="supprt-upload-progress__percent">{uploadProgress.progress}%</span>
+          </div>
+          <div class="supprt-upload-progress__bar">
+            <div
+              class="supprt-upload-progress__fill"
+              style={{ width: `${uploadProgress.progress}%`, backgroundColor: primaryColor }}
+            />
+          </div>
+        </div>
+      )}
       {selectedFiles.length > 0 && (
         <div class="supprt-input__files">
           {selectedFiles.map((file, index) => (

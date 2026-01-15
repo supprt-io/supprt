@@ -14,6 +14,8 @@ export interface SupprtConfig {
   position?: 'bottom-right' | 'bottom-left'
   primaryColor?: string
   zIndex?: number
+  /** @internal API URL override for development/self-hosting */
+  apiUrl?: string
 }
 
 export interface EndUser {

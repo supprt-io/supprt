@@ -3,6 +3,7 @@ export type SupportedLocale = 'en' | 'fr' | 'es' | 'de'
 export interface Translations {
   // Chat window
   support: string
+  you: string
   newConversation: string
   noMessages: string
   resolved: string
@@ -25,4 +26,18 @@ export interface Translations {
   failedToInitialize: string
   failedToLoadMessages: string
   failedToSendMessage: string
+
+  // Actions
+  dismiss: string
+
+  // Image lightbox
+  viewImage: string
+  imagePreview: string
+  closeImage: string
+
+  // Connection status
+  reconnecting: string
+  disconnected: string
+  offline: string
+  messagesQueued: string
 }

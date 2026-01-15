@@ -3,6 +3,7 @@ import type { Translations } from '../types'
 export const de: Translations = {
   // Chat window
   support: 'Support',
+  you: 'Du',
   newConversation: 'Neue Unterhaltung',
   noMessages: 'Keine Nachrichten',
   resolved: 'Gelost',
@@ -25,4 +26,18 @@ export const de: Translations = {
   failedToInitialize: 'Initialisierung fehlgeschlagen',
   failedToLoadMessages: 'Nachrichten konnten nicht geladen werden',
   failedToSendMessage: 'Nachricht konnte nicht gesendet werden',
+
+  // Actions
+  dismiss: 'Schliessen',
+
+  // Image lightbox
+  viewImage: 'Bild ansehen',
+  imagePreview: 'Bildvorschau',
+  closeImage: 'Bild schliessen',
+
+  // Connection status
+  reconnecting: 'Verbindung wird wiederhergestellt...',
+  disconnected: 'Verbindung verloren',
+  offline: 'Sie sind offline',
+  messagesQueued: 'Nachricht(en) in der Warteschlange',
 }

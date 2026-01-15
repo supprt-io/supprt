@@ -10,8 +10,19 @@ interface WidgetProps {
 }
 
 export function Widget({ config }: WidgetProps): JSX.Element {
-  const { state, isComposing, hasUnread, primaryColor, position, translations, actions } =
-    useWidget(config)
+  const {
+    state,
+    isComposing,
+    hasUnread,
+    isAgentTyping,
+    uploadProgress,
+    connectionStatus,
+    queuedMessages,
+    primaryColor,
+    position,
+    translations,
+    actions,
+  } = useWidget(config)
 
   return (
     <I18nContext.Provider value={translations}>
@@ -19,12 +30,17 @@ export function Widget({ config }: WidgetProps): JSX.Element {
         <ChatWindow
           isOpen={state.isOpen}
           isLoading={state.isLoading}
+          error={state.error}
           project={state.project}
           messages={state.messages}
           activeConversation={state.activeConversation}
           conversations={state.conversations}
           isSending={state.isSending}
           isComposing={isComposing}
+          isAgentTyping={isAgentTyping}
+          uploadProgress={uploadProgress}
+          connectionStatus={connectionStatus}
+          queuedMessagesCount={queuedMessages.length}
           primaryColor={primaryColor}
           position={position}
           onSendMessage={actions.sendMessage}
@@ -33,6 +49,7 @@ export function Widget({ config }: WidgetProps): JSX.Element {
           onSelectConversation={actions.loadConversation}
           onNewConversation={actions.startNewConversation}
           onBackToList={actions.backToList}
+          onClearError={actions.clearError}
         />
 
         <ChatBubble

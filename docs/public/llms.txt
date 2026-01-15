@@ -1,6 +1,6 @@
 # @supprt/widget
 
-Supprt is a lightweight, embeddable customer support chat widget. It connects website visitors to support teams via Discord, Slack, or custom webhooks.
+Supprt is a lightweight, embeddable customer support chat widget. It connects website visitors to support teams via Discord, Slack, or AI.
 
 Package: @supprt/widget
 Documentation: https://docs.supprt.io

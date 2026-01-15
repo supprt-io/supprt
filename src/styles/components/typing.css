@@ -1,0 +1,55 @@
+/**
+ * Typing indicator
+ */
+
+.supprt-typing {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  animation: supprt-message-appear 0.25s var(--supprt-ease-out);
+}
+
+.supprt-typing__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.supprt-typing__bubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 18px;
+  background: white;
+  border-radius: var(--supprt-radius-lg);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--supprt-gray-100);
+}
+
+.supprt-typing__dot {
+  width: 7px;
+  height: 7px;
+  background: var(--supprt-gray-400);
+  border-radius: 50%;
+  animation: supprt-typing-bounce 1.4s ease-in-out infinite;
+}
+
+.supprt-typing__dot:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.supprt-typing__dot:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+.supprt-typing__dot:nth-child(3) {
+  animation-delay: 320ms;
+}

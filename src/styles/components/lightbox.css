@@ -1,0 +1,84 @@
+/**
+ * Image preview and lightbox
+ */
+
+.supprt-image-preview {
+  max-width: 220px;
+  border-radius: var(--supprt-radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s var(--supprt-ease-out);
+  box-shadow: var(--supprt-shadow-sm);
+}
+
+.supprt-image-preview--loading {
+  width: 180px;
+  height: 120px;
+  background: linear-gradient(
+    90deg,
+    var(--supprt-gray-100) 25%,
+    var(--supprt-gray-200) 50%,
+    var(--supprt-gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: supprt-shimmer 1.5s ease-in-out infinite;
+}
+
+.supprt-image-preview:hover {
+  transform: scale(1.02);
+  box-shadow: var(--supprt-shadow-md);
+}
+
+.supprt-image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Lightbox overlay */
+.supprt-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: calc(var(--supprt-z-index) + 100);
+  animation: supprt-fade-in 0.2s ease-out;
+  padding: 20px;
+}
+
+.supprt-lightbox__image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--supprt-radius-md);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: supprt-lightbox-enter 0.3s var(--supprt-ease-out);
+}
+
+.supprt-lightbox__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--supprt-radius-full);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--supprt-ease-out);
+}
+
+.supprt-lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}

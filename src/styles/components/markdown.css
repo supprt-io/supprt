@@ -1,0 +1,63 @@
+/**
+ * Markdown styles for message content
+ */
+
+/* Inline code */
+.supprt-md-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.supprt-message--user .supprt-md-code {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Code blocks */
+.supprt-md-codeblock {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125em;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: var(--supprt-radius-sm);
+  background-color: var(--supprt-gray-100);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.supprt-message--user .supprt-md-codeblock {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.supprt-md-codeblock code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Links */
+.supprt-md-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 0.15s ease;
+}
+
+.supprt-md-link:hover {
+  opacity: 0.8;
+}
+
+.supprt-message--agent .supprt-md-link {
+  color: var(--supprt-primary, #04b3a4);
+}
+
+/* Bold and italic */
+.supprt-message__content strong {
+  font-weight: 600;
+}
+
+.supprt-message__content em {
+  font-style: italic;
+}

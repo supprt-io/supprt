@@ -7,10 +7,27 @@ import type { Conversation, Message, SupprtConfig, WidgetState } from '../types'
 const DEFAULT_PRIMARY_COLOR = '#04b3a4'
 const DEFAULT_POSITION = 'bottom-right'
 
+export interface UploadProgress {
+  filename: string
+  progress: number
+}
+
+export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected' | 'offline'
+
+export interface QueuedMessage {
+  content: string
+  files?: File[]
+  timestamp: number
+}
+
 export interface UseWidgetReturn {
   state: WidgetState
   isComposing: boolean
   hasUnread: boolean
+  isAgentTyping: boolean
+  uploadProgress: UploadProgress | null
+  connectionStatus: ConnectionStatus
+  queuedMessages: QueuedMessage[]
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   translations: ReturnType<typeof getTranslations>
@@ -22,6 +39,7 @@ export interface UseWidgetReturn {
     loadConversation: (conversation: Conversation) => Promise<void>
     sendMessage: (content: string, files?: File[]) => Promise<void>
     downloadAttachment: (attachmentId: string) => Promise<string>
+    clearError: () => void
   }
 }
 
@@ -42,9 +60,24 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
   const [hasUnread, setHasUnread] = useState(false)
   const [isComposing, setIsComposing] = useState(false)
+  const [isAgentTyping, setIsAgentTyping] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
+    typeof navigator !== 'undefined' && !navigator.onLine ? 'offline' : 'connected',
+  )
+  const [queuedMessages, setQueuedMessages] = useState<QueuedMessage[]>([])
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== 'undefined' ? navigator.onLine : true,
+  )
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const initializingRef = useRef(false)
+  const processingQueueRef = useRef(false)
+  // Set for O(1) message duplicate checks
+  const messageIdsRef = useRef<Set<string>>(new Set())
 
-  const [api] = useState(() => new SupprtApi('https://api.supprt.io', config.publicKey))
+  const [api] = useState(
+    () => new SupprtApi(config.apiUrl || 'https://api.supprt.io', config.publicKey),
+  )
 
   const primaryColor = config.primaryColor || state.project?.primaryColor || DEFAULT_PRIMARY_COLOR
   const position =
@@ -97,6 +130,8 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
       try {
         const response = await api.getConversation(conversation.id)
+        // Rebuild the message IDs Set for O(1) duplicate checks
+        messageIdsRef.current = new Set(response.conversation.messages.map((m) => m.id))
         setState((s) => ({
           ...s,
           isLoading: false,
@@ -119,13 +154,19 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       const attachments: AttachmentInput[] = []
 
       for (const file of files) {
+        setUploadProgress({ filename: file.name, progress: 0 })
+
         const { uploadUrl, key } = await api.getUploadUrl(
           conversationId,
           file.name,
           file.type || 'application/octet-stream',
           file.size,
         )
-        await api.uploadFile(uploadUrl, file)
+
+        await api.uploadFile(uploadUrl, file, (progress) => {
+          setUploadProgress({ filename: file.name, progress })
+        })
+
         attachments.push({
           key,
           filename: file.name,
@@ -134,13 +175,14 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         })
       }
 
+      setUploadProgress(null)
       return attachments
     },
     [api],
   )
 
   // Send a message (with optional file attachments)
-  const sendMessage = useCallback(
+  const sendMessageInternal = useCallback(
     async (content: string, files?: File[]) => {
       setState((s) => ({ ...s, isSending: true }))
 
@@ -158,6 +200,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
             senderType: 'user',
             createdAt: response.message.createdAt || new Date().toISOString(),
           }
+          messageIdsRef.current.add(newMessage.id)
           setState((s) => ({
             ...s,
             isSending: false,
@@ -171,6 +214,8 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
             senderType: 'user',
             createdAt: response.message.createdAt || new Date().toISOString(),
           }
+          // Reset the Set for the new conversation
+          messageIdsRef.current = new Set([newMessage.id])
           setIsComposing(false)
           setState((s) => ({
             ...s,
@@ -188,6 +233,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
               senderType: 'user',
               createdAt: filesResponse.message.createdAt || new Date().toISOString(),
             }
+            messageIdsRef.current.add(filesMessage.id)
             setState((s) => ({
               ...s,
               isSending: false,
@@ -207,6 +253,46 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     },
     [api, state.activeConversation, uploadFiles],
   )
+
+  // Queue message when offline, send immediately when online
+  const sendMessage = useCallback(
+    async (content: string, files?: File[]) => {
+      if (!isOnline) {
+        // Queue the message for later (only text, files need network)
+        if (files && files.length > 0) {
+          setState((s) => ({
+            ...s,
+            error: 'Cannot send files while offline',
+          }))
+          return
+        }
+        setQueuedMessages((prev) => [...prev, { content, timestamp: Date.now() }])
+        return
+      }
+      await sendMessageInternal(content, files)
+    },
+    [isOnline, sendMessageInternal],
+  )
+
+  // Process queued messages when back online
+  const processQueue = useCallback(async () => {
+    if (processingQueueRef.current || queuedMessages.length === 0) return
+    processingQueueRef.current = true
+
+    const queue = [...queuedMessages]
+    setQueuedMessages([])
+
+    for (const msg of queue) {
+      try {
+        await sendMessageInternal(msg.content, msg.files)
+      } catch {
+        // Re-queue failed messages
+        setQueuedMessages((prev) => [...prev, msg])
+      }
+    }
+
+    processingQueueRef.current = false
+  }, [queuedMessages, sendMessageInternal])
 
   // Toggle widget open/close
   const toggleOpen = useCallback(() => {
@@ -236,11 +322,17 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   // Go back to conversation list
   const backToList = useCallback(() => {
     setIsComposing(false)
+    messageIdsRef.current.clear()
     setState((s) => ({
       ...s,
       activeConversation: null,
       messages: [],
     }))
+  }, [])
+
+  // Clear error
+  const clearError = useCallback(() => {
+    setState((s) => ({ ...s, error: null }))
   }, [])
 
   // Download an attachment
@@ -252,12 +344,41 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     [api],
   )
 
-  // Initialize on first open
+  // Online/offline detection
   useEffect(() => {
-    if (state.isOpen && !state.isInitialized) {
+    const handleOnline = () => {
+      setIsOnline(true)
+      setConnectionStatus('connected')
+    }
+
+    const handleOffline = () => {
+      setIsOnline(false)
+      setConnectionStatus('offline')
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
+
+  // Process queued messages when back online
+  useEffect(() => {
+    if (isOnline && queuedMessages.length > 0) {
+      processQueue()
+    }
+  }, [isOnline, queuedMessages.length, processQueue])
+
+  // Initialize on mount to establish SSE connection early
+  // This allows receiving messages even when widget is closed
+  useEffect(() => {
+    if (!state.isInitialized) {
       initialize()
     }
-  }, [state.isOpen, state.isInitialized, initialize])
+  }, [state.isInitialized, initialize])
 
   // Subscribe to real-time updates via SSE
   useEffect(() => {
@@ -272,13 +393,23 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
           return
         }
 
+        // Clear typing indicator when a new message arrives
+        setIsAgentTyping(false)
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current)
+          typingTimeoutRef.current = null
+        }
+
+        // O(1) duplicate check using Set
+        if (messageIdsRef.current.has(data.message.id)) {
+          return
+        }
+
         setState((s) => {
           // If this message is for the active conversation, add it to messages
           if (s.activeConversation?.id === data.conversationId) {
-            // Avoid duplicates
-            if (s.messages.some((m) => m.id === data.message.id)) {
-              return s
-            }
+            // Add to the Set
+            messageIdsRef.current.add(data.message.id)
 
             // Mark as unread if widget is closed
             if (!s.isOpen) {
@@ -314,18 +445,48 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
           ),
         }))
       },
-      (error) => {
-        console.error('[Supprt] SSE error:', error)
+      () => {
+        // Errors handled via connection status
+      },
+      (typingData) => {
+        // Handle typing indicator events
+        if (typingData.isTyping && typingData.conversationId === state.activeConversation?.id) {
+          setIsAgentTyping(true)
+          // Auto-clear after 5 seconds
+          if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current)
+          }
+          typingTimeoutRef.current = setTimeout(() => {
+            setIsAgentTyping(false)
+          }, 5000)
+        } else if (!typingData.isTyping) {
+          setIsAgentTyping(false)
+        }
+      },
+      (status) => {
+        // Handle connection status changes (but don't override offline)
+        if (navigator.onLine) {
+          setConnectionStatus(status)
+        }
       },
     )
 
-    return () => unsubscribe()
-  }, [api, state.isInitialized])
+    return () => {
+      unsubscribe()
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+    }
+  }, [api, state.isInitialized, state.activeConversation?.id])
 
   return {
     state,
     isComposing,
     hasUnread,
+    isAgentTyping,
+    uploadProgress,
+    connectionStatus,
+    queuedMessages,
     primaryColor,
     position,
     translations,
@@ -337,6 +498,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       loadConversation,
       sendMessage,
       downloadAttachment,
+      clearError,
     },
   }
 }

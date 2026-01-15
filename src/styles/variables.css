@@ -1,0 +1,54 @@
+/**
+ * CSS Custom Properties (Design Tokens)
+ * All colors, spacing, shadows, and animations are defined here
+ */
+
+.supprt-widget {
+  /* Z-index */
+  --supprt-z-index: 9999;
+
+  /* Typography */
+  --supprt-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+  /* Border radius */
+  --supprt-radius-sm: 8px;
+  --supprt-radius-md: 12px;
+  --supprt-radius-lg: 20px;
+  --supprt-radius-xl: 24px;
+  --supprt-radius-full: 9999px;
+
+  /* Shadows - Multi-layer for depth */
+  --supprt-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --supprt-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --supprt-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --supprt-shadow-xl: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.08), 0
+    0 0 1px rgba(0, 0, 0, 0.03);
+  --supprt-shadow-bubble: 0 8px 24px -4px rgba(0, 0, 0, 0.18), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+
+  /* Colors - Gray scale */
+  --supprt-gray-50: #f9fafb;
+  --supprt-gray-100: #f3f4f6;
+  --supprt-gray-200: #e5e7eb;
+  --supprt-gray-300: #d1d5db;
+  --supprt-gray-400: #9ca3af;
+  --supprt-gray-500: #6b7280;
+  --supprt-gray-600: #4b5563;
+  --supprt-gray-700: #374151;
+  --supprt-gray-800: #1f2937;
+  --supprt-gray-900: #111827;
+
+  /* Colors - Semantic */
+  --supprt-success: #10b981;
+  --supprt-success-light: #d1fae5;
+  --supprt-error: #991b1b;
+  --supprt-error-light: #fef2f2;
+  --supprt-error-border: #fecaca;
+  --supprt-warning: #92400e;
+  --supprt-warning-light: #fef3c7;
+  --supprt-warning-border: #fcd34d;
+
+  /* Animation timing functions */
+  --supprt-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --supprt-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --supprt-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

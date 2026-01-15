@@ -1,0 +1,77 @@
+/**
+ * Error banner
+ */
+
+.supprt-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--supprt-error-light);
+  border-bottom: 1px solid var(--supprt-error-border);
+  color: var(--supprt-error);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.supprt-error-banner__message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.supprt-error-banner__close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--supprt-error);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.supprt-error-banner__close:hover {
+  background-color: #fee2e2;
+}
+
+.supprt-error-banner__close:active {
+  background-color: var(--supprt-error-border);
+}
+
+/**
+ * Connection status banner
+ */
+
+.supprt-connection-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.supprt-connection-banner--reconnecting {
+  background-color: var(--supprt-warning-light, #fef3c7);
+  border-bottom: 1px solid var(--supprt-warning-border, #fcd34d);
+  color: var(--supprt-warning, #92400e);
+}
+
+.supprt-connection-banner--disconnected {
+  background-color: var(--supprt-error-light);
+  border-bottom: 1px solid var(--supprt-error-border);
+  color: var(--supprt-error);
+}
+
+.supprt-connection-banner--offline {
+  background-color: var(--supprt-gray-100);
+  border-bottom: 1px solid var(--supprt-gray-200);
+  color: var(--supprt-gray-600);
+}

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Supprt
   text: Customer support made simple
-  tagline: Embeddable chat widget that connects your users to Discord, Slack, or webhooks. Set up in minutes.
+  tagline: Embeddable chat widget that connects your users to Discord, Slack, or AI. Set up in minutes.
   image:
     src: /logo.svg
     alt: Supprt
@@ -31,7 +31,7 @@ features:
     details: Only ~14KB gzipped. No external dependencies. Fast loading and minimal impact on your page performance.
   - icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg>
     title: Multi-channel
-    details: Route conversations to Discord, Slack, or custom webhooks. Your team responds where they already work.
+    details: Route conversations to Discord, Slack, or let AI respond. Your team responds where they already work.
   - icon: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
     title: Open Source
     details: MIT licensed. Fully transparent code you can trust.

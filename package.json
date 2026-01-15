@@ -26,6 +26,7 @@
   ],
   "scripts": {
     "dev": "vite build --watch",
+    "dev:example": "node example/server.js",
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src",
