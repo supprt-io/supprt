@@ -41,7 +41,6 @@ export function MessageList({
   const messagesLength = messages.length
 
   // Scroll to bottom when new messages arrive (not when loading more old messages)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll when messages count changes or typing state changes
   useEffect(() => {
     if (containerRef.current && !isLoadingMoreRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
@@ -62,7 +61,6 @@ export function MessageList({
   }
 
   // Maintain scroll position after loading more messages
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We need to trigger on messages change to adjust scroll position
   useEffect(() => {
     if (isLoadingMoreRef.current && containerRef.current && prevScrollHeightRef.current > 0) {
       const newScrollHeight = containerRef.current.scrollHeight
@@ -75,7 +73,7 @@ export function MessageList({
   if (isLoading) {
     return (
       <div class="supprt-messages supprt-messages--loading" aria-busy="true">
-        <div class="supprt-spinner" role="status" aria-label="Loading messages" />
+        <output class="supprt-spinner" aria-label="Loading messages" />
       </div>
     )
   }

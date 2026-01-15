@@ -75,9 +75,11 @@ export function ChatWindow({
   const isConversationClosed = activeConversation?.status === 'closed'
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: div required for styling and ref attachment
     <div
       ref={focusTrapRef}
       class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''}`}
+      role="region"
       aria-label={project?.name || t.support}
     >
       {connectionStatus === 'offline' && (

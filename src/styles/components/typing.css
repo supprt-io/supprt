@@ -31,7 +31,9 @@
   background: white;
   border-radius: var(--supprt-radius-lg);
   border-bottom-left-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--supprt-gray-100);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 0 0 1px var(--supprt-gray-100);
 }
 
 .supprt-typing__dot {

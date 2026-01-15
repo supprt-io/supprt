@@ -55,6 +55,7 @@ function ImageLightbox({ src, alt, onClose }: ImageLightboxProps): JSX.Element {
   return (
     <div
       class="supprt-lightbox"
+      role="dialog"
       aria-label={t.imagePreview}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
