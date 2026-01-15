@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/supprt-io/supprt/compare/v0.0.7...v0.0.8) (2026-01-15)
+
+
+### Features
+
+* add stability and feature improvements ([df3a567](https://github.com/supprt-io/supprt/commit/df3a567d88b16c6493c5c22d4e0f9a3f26659b8b))
+
 ## [0.0.7](https://github.com/supprt-io/supprt/compare/v0.0.6...v0.0.7) (2026-01-13)
 
 
