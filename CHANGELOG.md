@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.0](https://github.com/supprt-io/supprt/compare/v0.0.8...v0.1.0) (2026-01-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* Requires biome 2.x for development
+
+### Features
+
+* add stability and feature improvements ([df3a567](https://github.com/supprt-io/supprt/commit/df3a567d88b16c6493c5c22d4e0f9a3f26659b8b))
+* add user metadata support with automatic version tracking ([e9fecc9](https://github.com/supprt-io/supprt/commit/e9fecc9f22cc1d01c39e74c2fc3823ea07a4872a))
+* configure trusted publisher for npm releases ([02514e3](https://github.com/supprt-io/supprt/commit/02514e3bc48ec224018620144a6b98badb90ccce))
+* display admin avatar in messages ([c22313b](https://github.com/supprt-io/supprt/commit/c22313b78e4434cd37bb9b3ffad91faec2eda08c))
+* enhance chat functionality with file uploads and new components ([42c0437](https://github.com/supprt-io/supprt/commit/42c0437b9f5bf79f2aa777c7e0281092e360a043))
+* hide widget on initialization failure ([61fd2b6](https://github.com/supprt-io/supprt/commit/61fd2b674ab67bb51d150a0057ef29ce1154be3e))
+* initial release of Supprt widget SDK ([eadd07e](https://github.com/supprt-io/supprt/commit/eadd07eeda8bc7d97ea541520fd78ab7cc2a157e))
+* upgrade to biome 2.x with improved accessibility ([ad854f5](https://github.com/supprt-io/supprt/commit/ad854f5469b69ebbda0015d986beddbbb63c980d))
+
+
+### Bug Fixes
+
+* **ci:** use config files for release-please ([0de8f8a](https://github.com/supprt-io/supprt/commit/0de8f8ab0fd956162eccd9223538df741f12feea))
+* **ci:** use PAT for release-please to create PRs ([c2e103c](https://github.com/supprt-io/supprt/commit/c2e103c93fcfb86665fb50d1867e0fc9727e797f))
+* format img element ([9d91fa9](https://github.com/supprt-io/supprt/commit/9d91fa9140c8f62964d6a0677844697448c12697))
+* hardcode API URL and fix data attributes ([4f5ccf2](https://github.com/supprt-io/supprt/commit/4f5ccf282e2485ee126f5dded70c6cf6eb65203a))
+* resolve esbuild security vulnerability ([f2c436f](https://github.com/supprt-io/supprt/commit/f2c436fcd3cd2c9d92eca5ff06fb8501bc408bde))
+* use Node.js 24 LTS in CI workflows ([e7615a4](https://github.com/supprt-io/supprt/commit/e7615a42bdade08d62e19189eb22f35c089da499))
+
 ## [0.0.8](https://github.com/supprt-io/supprt/compare/v0.0.7...v0.0.8) (2026-01-15)
 
 
