@@ -298,6 +298,7 @@ export class SupprtApi {
   async markAsRead(conversationId: string): Promise<void> {
     await this.request(`/api/v1/conversations/${conversationId}/read`, {
       method: 'POST',
+      body: JSON.stringify({}),
     })
   }
 
