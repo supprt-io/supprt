@@ -8,6 +8,22 @@ export default defineConfig({
   // For GitHub Pages without custom domain, use '/supprt/'
   base: '/',
 
+  // SEO: Generate sitemap
+  sitemap: {
+    hostname: 'https://docs.supprt.io',
+  },
+
+  // SEO: Canonical URL
+  transformHead({ pageData }) {
+    const canonicalUrl = `https://docs.supprt.io/${pageData.relativePath}`
+      .replace(/\.md$/, '.html')
+      .replace(/index\.html$/, '')
+
+    return [
+      ['link', { rel: 'canonical', href: canonicalUrl }],
+    ]
+  },
+
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }],
     ['meta', { name: 'theme-color', content: '#2a9d8f' }],
