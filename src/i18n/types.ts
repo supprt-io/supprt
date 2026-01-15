@@ -7,6 +7,7 @@ export interface Translations {
   newConversation: string
   noMessages: string
   resolved: string
+  unread: string
   conversationResolved: string
   startNewConversation: string
   poweredBy: string

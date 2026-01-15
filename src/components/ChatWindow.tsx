@@ -24,6 +24,8 @@ interface ChatWindowProps {
   uploadProgress: UploadProgress | null
   connectionStatus: ConnectionStatus
   queuedMessagesCount: number
+  hasMoreMessages: boolean
+  isLoadingMore: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   onSendMessage: (message: string, files?: File[]) => void
@@ -33,6 +35,7 @@ interface ChatWindowProps {
   onNewConversation: () => void
   onBackToList: () => void
   onClearError: () => void
+  onLoadMore: () => void
 }
 
 export function ChatWindow({
@@ -49,6 +52,8 @@ export function ChatWindow({
   uploadProgress,
   connectionStatus,
   queuedMessagesCount,
+  hasMoreMessages,
+  isLoadingMore,
   primaryColor,
   position,
   onSendMessage,
@@ -58,6 +63,7 @@ export function ChatWindow({
   onNewConversation,
   onBackToList,
   onClearError,
+  onLoadMore,
 }: ChatWindowProps): JSX.Element | null {
   const t = useTranslation()
   const focusTrapRef = useFocusTrap(isOpen, onClose)
@@ -143,7 +149,10 @@ export function ChatWindow({
               isLoading={isLoading}
               isAgentTyping={isAgentTyping}
               primaryColor={primaryColor}
+              hasMoreMessages={hasMoreMessages}
+              isLoadingMore={isLoadingMore}
               onDownloadAttachment={onDownloadAttachment}
+              onLoadMore={onLoadMore}
             />
             {isConversationClosed ? (
               <ConversationClosed

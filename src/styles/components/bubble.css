@@ -18,6 +18,7 @@
   box-shadow: var(--supprt-shadow-bubble);
   z-index: var(--supprt-z-index);
   transition: all 0.25s var(--supprt-ease-out);
+  transform-origin: bottom right;
   animation: supprt-bubble-enter 0.4s var(--supprt-spring);
 }
 
@@ -34,6 +35,7 @@
 .supprt-bubble--left {
   right: auto;
   left: 24px;
+  transform-origin: bottom left;
 }
 
 .supprt-bubble__badge {
@@ -53,10 +55,8 @@
   justify-content: center;
   border: 2.5px solid white;
   box-shadow: 0 2px 8px rgba(244, 63, 94, 0.4);
-  animation: supprt-badge-bounce 0.4s var(--supprt-spring);
 }
 
 .supprt-bubble__badge--pulse {
-  animation: supprt-badge-bounce 0.4s var(--supprt-spring), supprt-pulse 2s ease-in-out 0.4s
-    infinite;
+  animation: supprt-pulse 2s ease-in-out infinite;
 }

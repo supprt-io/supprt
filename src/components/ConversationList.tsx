@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-preact'
+import { CircleAlert, Plus } from 'lucide-preact'
 import type { JSX } from 'preact'
 import { useTranslation } from '../i18n'
 import type { Conversation } from '../types'
@@ -66,6 +66,9 @@ function ConversationItem({ conversation, onSelect }: ConversationItemProps): JS
           </span>
         </div>
       </div>
+      {conversation.hasUnread && (
+        <CircleAlert size={18} class="supprt-conversation-item__unread" aria-label={t.unread} />
+      )}
     </button>
   )
 }

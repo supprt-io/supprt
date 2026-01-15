@@ -137,3 +137,9 @@
   font-size: 12px;
   color: var(--supprt-gray-400);
 }
+
+.supprt-conversation-item__unread {
+  flex-shrink: 0;
+  align-self: center;
+  color: #f43f5e;
+}

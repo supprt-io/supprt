@@ -7,6 +7,7 @@ export const de: Translations = {
   newConversation: 'Neue Unterhaltung',
   noMessages: 'Keine Nachrichten',
   resolved: 'Gelost',
+  unread: 'Ungelesen',
   conversationResolved: 'Diese Unterhaltung wurde abgeschlossen.',
   startNewConversation: 'Neue Unterhaltung starten',
   poweredBy: 'Bereitgestellt von',

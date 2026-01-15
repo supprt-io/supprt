@@ -19,6 +19,11 @@
     left: 0;
   }
 
+  /* Hide bubble when window is open on mobile (close icon in header is sufficient) */
+  .supprt-widget:has(.supprt-window) .supprt-bubble {
+    display: none;
+  }
+
   .supprt-bubble {
     bottom: 20px;
     right: 20px;

@@ -15,7 +15,7 @@ const locales: Record<SupportedLocale, Translations> = {
   de,
 }
 
-export function detectLocale(): SupportedLocale {
+function detectLocale(): SupportedLocale {
   if (typeof navigator === 'undefined') return 'en'
   const browserLang = navigator.language.split('-')[0]
   if (browserLang in locales) {

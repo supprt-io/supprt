@@ -286,8 +286,19 @@ export class SupprtApi {
 
   async getConversation(
     id: string,
-  ): Promise<{ conversation: Conversation & { messages: Message[] } }> {
-    return this.request(`/api/v1/conversations/${id}`)
+    options?: { limit?: number; before?: string },
+  ): Promise<{ conversation: Conversation & { messages: Message[] }; hasMore: boolean }> {
+    const params = new URLSearchParams()
+    if (options?.limit) params.set('limit', options.limit.toString())
+    if (options?.before) params.set('before', options.before)
+    const query = params.toString() ? `?${params.toString()}` : ''
+    return this.request(`/api/v1/conversations/${id}${query}`)
+  }
+
+  async markAsRead(conversationId: string): Promise<void> {
+    await this.request(`/api/v1/conversations/${conversationId}/read`, {
+      method: 'POST',
+    })
   }
 
   async createConversation(

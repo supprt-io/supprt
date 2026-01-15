@@ -35,6 +35,12 @@
   justify-content: center;
 }
 
+.supprt-messages__loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+
 /* Message bubbles */
 .supprt-message {
   max-width: 82%;

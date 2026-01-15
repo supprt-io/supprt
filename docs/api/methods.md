@@ -7,7 +7,7 @@ API reference for widget methods.
 Initialize and mount the widget.
 
 ```typescript
-function init(config: SupprtConfig): void
+function init(config: SupprtConfig): SupprtInstance
 ```
 
 ### Parameters
@@ -16,23 +16,30 @@ function init(config: SupprtConfig): void
 |-----------|------|-------------|
 | `config` | `SupprtConfig` | Widget configuration |
 
+### Returns
+
+Returns a `SupprtInstance` object with a `destroy()` method.
+
 ### Example
 
 ```javascript
 import { init } from '@supprt/widget'
 
-init({
-  projectId: 'YOUR_PROJECT_ID',
+const widget = init({
+  publicKey: 'pk_xxx',
   primaryColor: '#8b5cf6'
 })
+
+// Later, to remove the widget:
+widget.destroy()
 ```
 
 ### Behavior
 
-- Creates and mounts the widget element
+- Creates and mounts the widget element in a Shadow DOM
 - Establishes connection to the API
 - Loads conversation history (if user identified)
-- Does nothing if already initialized
+- Returns an instance for cleanup
 
 ---
 
@@ -79,132 +86,8 @@ function isInitialized(): boolean
 import { init, isInitialized } from '@supprt/widget'
 
 if (!isInitialized()) {
-  init({ projectId: 'YOUR_PROJECT_ID' })
+  init({ publicKey: 'pk_xxx' })
 }
-```
-
----
-
-## on()
-
-Subscribe to widget events.
-
-```typescript
-function on(event: string, handler: Function): void
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `event` | `string` | Event name |
-| `handler` | `Function` | Event handler function |
-
-### Example
-
-```javascript
-import { on } from '@supprt/widget'
-
-on('open', () => {
-  console.log('Widget opened')
-})
-
-on('message:sent', (message) => {
-  console.log('Sent:', message.content)
-})
-```
-
-### Available Events
-
-See [Events API](/api/events) for full event reference.
-
----
-
-## off()
-
-Unsubscribe from widget events.
-
-```typescript
-function off(event: string, handler: Function): void
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `event` | `string` | Event name |
-| `handler` | `Function` | The same handler function passed to `on()` |
-
-### Example
-
-```javascript
-import { on, off } from '@supprt/widget'
-
-const handler = () => console.log('opened')
-
-on('open', handler)
-
-// Later...
-off('open', handler)
-```
-
----
-
-## open()
-
-Programmatically open the chat window.
-
-```typescript
-function open(): void
-```
-
-### Example
-
-```javascript
-import { open } from '@supprt/widget'
-
-document.getElementById('help-btn').addEventListener('click', () => {
-  open()
-})
-```
-
----
-
-## close()
-
-Programmatically close the chat window.
-
-```typescript
-function close(): void
-```
-
-### Example
-
-```javascript
-import { close } from '@supprt/widget'
-
-// Close after sending a message
-on('message:sent', () => {
-  setTimeout(close, 2000)
-})
-```
-
----
-
-## toggle()
-
-Toggle the chat window open/closed.
-
-```typescript
-function toggle(): void
-```
-
-### Example
-
-```javascript
-import { toggle } from '@supprt/widget'
-
-document.getElementById('chat-toggle').addEventListener('click', toggle)
 ```
 
 ---
@@ -212,35 +95,38 @@ document.getElementById('chat-toggle').addEventListener('click', toggle)
 ## Complete Example
 
 ```javascript
-import {
-  init,
-  destroy,
-  isInitialized,
-  open,
-  close,
-  toggle,
-  on,
-  off
-} from '@supprt/widget'
+import { init, destroy, isInitialized } from '@supprt/widget'
 
 // Initialize
-init({
-  projectId: 'YOUR_PROJECT_ID'
+const widget = init({
+  publicKey: 'pk_xxx',
+  user: {
+    id: 'user_123',
+    email: 'john@example.com',
+    name: 'John Doe'
+  }
 })
 
 // Check status
 console.log('Initialized:', isInitialized())
 
-// Listen to events
-on('ready', () => {
-  console.log('Widget ready!')
-})
-
-// Control programmatically
-document.getElementById('open-chat').onclick = open
-document.getElementById('close-chat').onclick = close
-document.getElementById('toggle-chat').onclick = toggle
-
 // Cleanup on page unload
 window.addEventListener('beforeunload', destroy)
+```
+
+## Global API (Script Tag)
+
+When using the script tag, the widget is available globally:
+
+```javascript
+// Initialize
+window.Supprt.init({
+  publicKey: 'pk_xxx'
+})
+
+// Check status
+window.Supprt.isInitialized()
+
+// Destroy
+window.Supprt.destroy()
 ```

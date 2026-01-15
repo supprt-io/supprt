@@ -56,6 +56,7 @@ export interface Conversation {
   id: string
   status: 'open' | 'closed'
   lastMessage?: Message | null
+  hasUnread: boolean
   createdAt: string
   updatedAt: string
 }

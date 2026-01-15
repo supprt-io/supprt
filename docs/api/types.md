@@ -7,7 +7,7 @@ TypeScript type definitions for the widget.
 Types are included with the package. No additional installation needed.
 
 ```typescript
-import type { SupprtConfig, SupprtUser } from '@supprt/widget'
+import type { SupprtConfig } from '@supprt/widget'
 ```
 
 ## Type Definitions
@@ -19,16 +19,10 @@ Main configuration object.
 ```typescript
 interface SupprtConfig {
   /**
-   * Your project's unique identifier.
+   * Your project's public key.
    * Found in project settings on the dashboard.
    */
-  projectId: string
-
-  /**
-   * API endpoint URL.
-   * @default 'https://api.supprt.io'
-   */
-  apiUrl?: string
+  publicKey: string
 
   /**
    * Widget position on the page.
@@ -43,15 +37,16 @@ interface SupprtConfig {
   primaryColor?: string
 
   /**
-   * Welcome message shown on first open.
-   */
-  welcomeMessage?: string
-
-  /**
    * CSS z-index value.
    * @default 999999
    */
   zIndex?: number
+
+  /**
+   * UI language.
+   * @default 'en'
+   */
+  locale?: 'en' | 'fr' | 'es' | 'de'
 
   /**
    * User identification data.
@@ -101,7 +96,7 @@ interface SupprtUser {
 
 ### Message
 
-Message object returned in events.
+Message object.
 
 ```typescript
 interface Message {
@@ -118,12 +113,17 @@ interface Message {
   /**
    * Message sender type.
    */
-  senderType: 'user' | 'admin' | 'bot'
+  senderType: 'user' | 'agent' | 'bot'
 
   /**
-   * Sender's display name (for admin/bot).
+   * Sender's display name (for agent/bot).
    */
   senderName?: string
+
+  /**
+   * Sender's avatar URL.
+   */
+  senderAvatarUrl?: string
 
   /**
    * ISO 8601 timestamp.
@@ -191,6 +191,16 @@ interface Conversation {
   status: 'open' | 'closed'
 
   /**
+   * Last message in the conversation.
+   */
+  lastMessage?: Message | null
+
+  /**
+   * Whether there are unread messages.
+   */
+  hasUnread: boolean
+
+  /**
    * ISO 8601 creation timestamp.
    */
   createdAt: string
@@ -224,72 +234,25 @@ interface SupprtError {
 
 ---
 
-### EventHandler
-
-Event handler function types.
-
-```typescript
-type ReadyHandler = () => void
-type OpenHandler = () => void
-type CloseHandler = () => void
-type MessageSentHandler = (message: Message) => void
-type MessageReceivedHandler = (message: Message) => void
-type ConversationStartedHandler = (conversation: Conversation) => void
-type ErrorHandler = (error: SupprtError) => void
-```
-
----
-
 ## Usage Examples
 
 ### Type-safe Configuration
 
 ```typescript
 import { init } from '@supprt/widget'
-import type { SupprtConfig, SupprtUser } from '@supprt/widget'
-
-const user: SupprtUser = {
-  id: 'user_123',
-  email: 'john@example.com',
-  name: 'John Doe'
-}
+import type { SupprtConfig } from '@supprt/widget'
 
 const config: SupprtConfig = {
-  projectId: 'YOUR_PROJECT_ID',
+  publicKey: 'pk_xxx',
   primaryColor: '#8b5cf6',
   position: 'bottom-right',
-  user
+  locale: 'en',
+  user: {
+    id: 'user_123',
+    email: 'john@example.com',
+    name: 'John Doe'
+  }
 }
 
 init(config)
-```
-
-### Type-safe Event Handlers
-
-```typescript
-import { on } from '@supprt/widget'
-import type { Message, SupprtError } from '@supprt/widget'
-
-on('message:received', (message: Message) => {
-  console.log(message.content)
-  console.log(message.senderName)
-})
-
-on('error', (error: SupprtError) => {
-  console.error(`[${error.code}] ${error.message}`)
-})
-```
-
-### Generic Event Handler
-
-```typescript
-import { on, off } from '@supprt/widget'
-import type { Message } from '@supprt/widget'
-
-const handler = (message: Message): void => {
-  console.log(message)
-}
-
-on('message:sent', handler)
-off('message:sent', handler)
 ```

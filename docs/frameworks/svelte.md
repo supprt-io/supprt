@@ -33,28 +33,17 @@ npm install @supprt/widget
 
 ```javascript
 // stores/supprt.js
-import { writable } from 'svelte/store'
-import { init, destroy, on, off, isInitialized } from '@supprt/widget'
-
-export const supprtReady = writable(false)
-export const unreadCount = writable(0)
+import { init, destroy, isInitialized } from '@supprt/widget'
 
 export function initSupprt(config) {
   init(config)
-
-  on('ready', () => {
-    supprtReady.set(true)
-  })
-
-  on('message:received', () => {
-    unreadCount.update(n => n + 1)
-  })
 }
 
 export function destroySupprt() {
   destroy()
-  supprtReady.set(false)
 }
+
+export { isInitialized }
 ```
 
 Usage:
@@ -62,7 +51,7 @@ Usage:
 ```svelte
 <script>
   import { onMount, onDestroy } from 'svelte'
-  import { initSupprt, destroySupprt, supprtReady, unreadCount } from './stores/supprt'
+  import { initSupprt, destroySupprt } from './stores/supprt'
 
   onMount(() => {
     initSupprt({ publicKey: 'pk_xxx' })
@@ -73,13 +62,7 @@ Usage:
   })
 </script>
 
-{#if $supprtReady}
-  <p>Widget ready!</p>
-{/if}
-
-{#if $unreadCount > 0}
-  <span class="badge">{$unreadCount}</span>
-{/if}
+<div>Your app</div>
 ```
 
 ## With Authentication
@@ -124,47 +107,6 @@ Usage:
     destroy()
   })
 </script>
-```
-
-## Programmatic Control
-
-```svelte
-<script>
-  import { open, close, toggle } from '@supprt/widget'
-</script>
-
-<button on:click={toggle}>
-  Need help?
-</button>
-```
-
-## Event Handling
-
-```svelte
-<script>
-  import { onMount, onDestroy } from 'svelte'
-  import { init, destroy, on, off } from '@supprt/widget'
-
-  let unreadCount = 0
-
-  function handleMessage() {
-    unreadCount++
-  }
-
-  onMount(() => {
-    init({ publicKey: 'pk_xxx' })
-    on('message:received', handleMessage)
-  })
-
-  onDestroy(() => {
-    off('message:received', handleMessage)
-    destroy()
-  })
-</script>
-
-{#if unreadCount > 0}
-  <span class="badge">{unreadCount}</span>
-{/if}
 ```
 
 ## Action
@@ -240,8 +182,8 @@ For SvelteKit, initialize in the layout:
 ```svelte
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { init, destroy, on, off } from '@supprt/widget'
-  import type { SupprtConfig, Message } from '@supprt/widget'
+  import { init, destroy } from '@supprt/widget'
+  import type { SupprtConfig } from '@supprt/widget'
 
   export let publicKey: string
   export let user: { id: string; email: string; name: string } | undefined = undefined
@@ -253,16 +195,6 @@ For SvelteKit, initialize in the layout:
     }
 
     init(config)
-
-    const handleMessage = (message: Message) => {
-      console.log(message.content)
-    }
-
-    on('message:received', handleMessage)
-
-    return () => {
-      off('message:received', handleMessage)
-    }
   })
 
   onDestroy(() => {

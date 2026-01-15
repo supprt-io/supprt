@@ -7,7 +7,7 @@ interface ChatBubbleProps {
   isOpen: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
-  hasUnread?: boolean
+  unreadCount?: number
 }
 
 export function ChatBubble({
@@ -15,7 +15,7 @@ export function ChatBubble({
   isOpen,
   primaryColor,
   position,
-  hasUnread = false,
+  unreadCount = 0,
 }: ChatBubbleProps): JSX.Element {
   const t = useTranslation()
 
@@ -28,7 +28,7 @@ export function ChatBubble({
       aria-label={isOpen ? t.ariaCloseChat : t.ariaOpenChat}
     >
       {isOpen ? <X size={24} aria-hidden="true" /> : <MessageSquare size={24} aria-hidden="true" />}
-      {hasUnread && !isOpen && <span class="supprt-bubble__badge">!</span>}
+      {unreadCount > 0 && !isOpen && <span class="supprt-bubble__badge">!</span>}
     </button>
   )
 }

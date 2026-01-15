@@ -13,16 +13,20 @@ export function Widget({ config }: WidgetProps): JSX.Element {
   const {
     state,
     isComposing,
-    hasUnread,
     isAgentTyping,
     uploadProgress,
     connectionStatus,
     queuedMessages,
+    hasMoreMessages,
+    isLoadingMore,
     primaryColor,
     position,
     translations,
     actions,
   } = useWidget(config)
+
+  // Count unread conversations
+  const unreadCount = state.conversations.filter((c) => c.hasUnread).length
 
   return (
     <I18nContext.Provider value={translations}>
@@ -41,6 +45,8 @@ export function Widget({ config }: WidgetProps): JSX.Element {
           uploadProgress={uploadProgress}
           connectionStatus={connectionStatus}
           queuedMessagesCount={queuedMessages.length}
+          hasMoreMessages={hasMoreMessages}
+          isLoadingMore={isLoadingMore}
           primaryColor={primaryColor}
           position={position}
           onSendMessage={actions.sendMessage}
@@ -50,6 +56,7 @@ export function Widget({ config }: WidgetProps): JSX.Element {
           onNewConversation={actions.startNewConversation}
           onBackToList={actions.backToList}
           onClearError={actions.clearError}
+          onLoadMore={actions.loadMoreMessages}
         />
 
         <ChatBubble
@@ -57,7 +64,7 @@ export function Widget({ config }: WidgetProps): JSX.Element {
           isOpen={state.isOpen}
           primaryColor={primaryColor}
           position={position}
-          hasUnread={hasUnread}
+          unreadCount={unreadCount}
         />
       </div>
     </I18nContext.Provider>

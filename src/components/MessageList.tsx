@@ -15,7 +15,10 @@ interface MessageListProps {
   isLoading: boolean
   isAgentTyping?: boolean
   primaryColor?: string
+  hasMoreMessages?: boolean
+  isLoadingMore?: boolean
   onDownloadAttachment?: (attachmentId: string) => Promise<string>
+  onLoadMore?: () => void
 }
 
 export function MessageList({
@@ -25,18 +28,49 @@ export function MessageList({
   isLoading,
   isAgentTyping = false,
   primaryColor = '#04b3a4',
+  hasMoreMessages = false,
+  isLoadingMore = false,
   onDownloadAttachment,
+  onLoadMore,
 }: MessageListProps): JSX.Element {
   const t = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
+  const prevScrollHeightRef = useRef<number>(0)
+  const isLoadingMoreRef = useRef(false)
 
   const messagesLength = messages.length
+
+  // Scroll to bottom when new messages arrive (not when loading more old messages)
   // biome-ignore lint/correctness/useExhaustiveDependencies: We want to scroll when messages count changes or typing state changes
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current && !isLoadingMoreRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
+    isLoadingMoreRef.current = false
   }, [messagesLength, isAgentTyping])
+
+  // Handle scroll to top for loading more messages
+  const handleScroll = () => {
+    if (!containerRef.current || !hasMoreMessages || isLoadingMore || !onLoadMore) return
+
+    // Trigger load when scrolled within 50px of the top
+    if (containerRef.current.scrollTop < 50) {
+      isLoadingMoreRef.current = true
+      prevScrollHeightRef.current = containerRef.current.scrollHeight
+      onLoadMore()
+    }
+  }
+
+  // Maintain scroll position after loading more messages
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We need to trigger on messages change to adjust scroll position
+  useEffect(() => {
+    if (isLoadingMoreRef.current && containerRef.current && prevScrollHeightRef.current > 0) {
+      const newScrollHeight = containerRef.current.scrollHeight
+      const scrollDiff = newScrollHeight - prevScrollHeightRef.current
+      containerRef.current.scrollTop = scrollDiff
+      prevScrollHeightRef.current = 0
+    }
+  }, [messages])
 
   if (isLoading) {
     return (
@@ -53,7 +87,14 @@ export function MessageList({
       role="log"
       aria-live="polite"
       aria-label="Chat messages"
+      onScroll={handleScroll}
     >
+      {isLoadingMore && (
+        <div class="supprt-messages__loading-more">
+          <div class="supprt-spinner supprt-spinner--small" />
+        </div>
+      )}
+
       {welcomeMessage && (
         <div class="supprt-message supprt-message--agent">
           <span class="supprt-message__sender">{agentName || t.support}</span>

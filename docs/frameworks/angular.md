@@ -39,30 +39,19 @@ Create a service for better encapsulation:
 ```typescript
 // services/supprt.service.ts
 import { Injectable, OnDestroy } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
-import { init, destroy, on, off, isInitialized } from '@supprt/widget'
-import type { SupprtConfig, Message } from '@supprt/widget'
+import { init, destroy, isInitialized } from '@supprt/widget'
+import type { SupprtConfig } from '@supprt/widget'
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupprtService implements OnDestroy {
-  private ready$ = new BehaviorSubject<boolean>(false)
-  private messages$ = new BehaviorSubject<Message[]>([])
-
-  readonly isReady = this.ready$.asObservable()
-  readonly messages = this.messages$.asObservable()
-
   init(config: SupprtConfig): void {
     init(config)
+  }
 
-    on('ready', () => {
-      this.ready$.next(true)
-    })
-
-    on('message:received', (message: Message) => {
-      this.messages$.next([...this.messages$.value, message])
-    })
+  isInitialized(): boolean {
+    return isInitialized()
   }
 
   ngOnDestroy(): void {
@@ -80,15 +69,10 @@ import { SupprtService } from './services/supprt.service'
 
 @Component({
   selector: 'app-root',
-  template: `
-    <div *ngIf="supprtService.isReady | async">
-      Widget ready!
-    </div>
-    <router-outlet></router-outlet>
-  `
+  template: '<router-outlet></router-outlet>'
 })
 export class AppComponent implements OnInit {
-  constructor(public supprtService: SupprtService) {}
+  constructor(private supprtService: SupprtService) {}
 
   ngOnInit() {
     this.supprtService.init({
@@ -138,64 +122,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authSub?.unsubscribe()
-    destroy()
-  }
-}
-```
-
-## Programmatic Control
-
-```typescript
-// help-button.component.ts
-import { Component } from '@angular/core'
-import { open, close, toggle } from '@supprt/widget'
-
-@Component({
-  selector: 'app-help-button',
-  template: `
-    <button (click)="toggleChat()">
-      Need help?
-    </button>
-  `
-})
-export class HelpButtonComponent {
-  toggleChat() {
-    toggle()
-  }
-}
-```
-
-## Event Handling
-
-```typescript
-// app.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { init, destroy, on, off } from '@supprt/widget'
-import type { Message } from '@supprt/widget'
-
-@Component({
-  selector: 'app-root',
-  template: `
-    <span *ngIf="unreadCount > 0" class="badge">
-      {{ unreadCount }}
-    </span>
-    <router-outlet></router-outlet>
-  `
-})
-export class AppComponent implements OnInit, OnDestroy {
-  unreadCount = 0
-
-  private handleMessage = (message: Message) => {
-    this.unreadCount++
-  }
-
-  ngOnInit() {
-    init({ publicKey: 'pk_xxx' })
-    on('message:received', this.handleMessage)
-  }
-
-  ngOnDestroy() {
-    off('message:received', this.handleMessage)
     destroy()
   }
 }

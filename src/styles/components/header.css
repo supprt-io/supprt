@@ -36,29 +36,28 @@
 
 .supprt-header__back,
 .supprt-header__close {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
+  background: transparent;
   border: none;
   color: white;
   cursor: pointer;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--supprt-radius-md);
+  padding: 6px;
+  border-radius: var(--supprt-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s var(--supprt-ease-out);
+  opacity: 0.85;
 }
 
 .supprt-header__back:hover,
 .supprt-header__close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .supprt-header__back:active,
 .supprt-header__close:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 .supprt-header__info {

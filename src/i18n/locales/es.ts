@@ -7,6 +7,7 @@ export const es: Translations = {
   newConversation: 'Nueva conversacion',
   noMessages: 'Sin mensajes',
   resolved: 'Resuelto',
+  unread: 'No leido',
   conversationResolved: 'Esta conversacion ha sido resuelta.',
   startNewConversation: 'Iniciar una nueva conversacion',
   poweredBy: 'Desarrollado por',

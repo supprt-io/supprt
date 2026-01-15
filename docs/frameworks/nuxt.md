@@ -58,11 +58,10 @@ Create a composable for more control:
 
 ```typescript
 // composables/useSupprt.ts
-import { init, destroy, on, off, isInitialized } from '@supprt/widget'
+import { init, destroy, isInitialized } from '@supprt/widget'
 import type { SupprtConfig } from '@supprt/widget'
 
 export function useSupprt() {
-  const ready = ref(false)
   const config = useRuntimeConfig()
 
   function initialize(options: Partial<SupprtConfig> = {}) {
@@ -71,17 +70,12 @@ export function useSupprt() {
         publicKey: config.public.supprtPublicKey,
         ...options
       })
-
-      on('ready', () => {
-        ready.value = true
-      })
     }
   }
 
   function cleanup() {
     if (import.meta.client) {
       destroy()
-      ready.value = false
     }
   }
 
@@ -94,7 +88,6 @@ export function useSupprt() {
   })
 
   return {
-    ready: readonly(ready),
     initialize,
     cleanup,
     isInitialized
@@ -107,13 +100,12 @@ Usage:
 ```vue
 <!-- app.vue -->
 <script setup>
-const { ready } = useSupprt()
+useSupprt()
 </script>
 
 <template>
   <div>
     <NuxtPage />
-    <div v-if="ready">Widget ready!</div>
   </div>
 </template>
 ```
@@ -157,44 +149,6 @@ export function useSupprt() {
     destroy()
   })
 }
-```
-
-## Programmatic Control
-
-```vue
-<script setup>
-import { open, close, toggle } from '@supprt/widget'
-</script>
-
-<template>
-  <button @click="toggle">Need help?</button>
-</template>
-```
-
-## Event Handling
-
-```vue
-<script setup>
-import { on, off } from '@supprt/widget'
-
-const unreadCount = ref(0)
-
-onMounted(() => {
-  on('message:received', () => {
-    unreadCount.value++
-  })
-})
-
-onUnmounted(() => {
-  // Clean up handled by plugin
-})
-</script>
-
-<template>
-  <span v-if="unreadCount > 0" class="badge">
-    {{ unreadCount }}
-  </span>
-</template>
 ```
 
 ## Module (Advanced)

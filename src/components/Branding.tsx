@@ -7,7 +7,7 @@ export function Branding(): JSX.Element {
   return (
     <footer class="supprt-branding">
       <a
-        href="https://supprt.dev"
+        href="https://supprt.io"
         target="_blank"
         rel="noopener noreferrer"
         class="supprt-branding__link"

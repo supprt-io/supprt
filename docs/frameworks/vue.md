@@ -38,17 +38,14 @@ Create a reusable composable:
 ```javascript
 // composables/useSupprt.js
 import { onMounted, onUnmounted, ref } from 'vue'
-import { init, destroy, on, off, isInitialized } from '@supprt/widget'
+import { init, destroy, isInitialized } from '@supprt/widget'
 
 export function useSupprt(config) {
   const ready = ref(false)
 
   onMounted(() => {
     init(config)
-
-    on('ready', () => {
-      ready.value = true
-    })
+    ready.value = true
   })
 
   onUnmounted(() => {
@@ -120,47 +117,6 @@ onUnmounted(() => {
 </script>
 ```
 
-## Programmatic Control
-
-```vue
-<script setup>
-import { open, close, toggle } from '@supprt/widget'
-</script>
-
-<template>
-  <button @click="toggle">Need help?</button>
-</template>
-```
-
-## Event Handling
-
-```vue
-<script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { init, destroy, on, off } from '@supprt/widget'
-
-const unreadCount = ref(0)
-
-onMounted(() => {
-  init({ publicKey: 'pk_xxx' })
-
-  on('message:received', () => {
-    unreadCount.value++
-  })
-})
-
-onUnmounted(() => {
-  destroy()
-})
-</script>
-
-<template>
-  <span v-if="unreadCount > 0" class="badge">
-    {{ unreadCount }}
-  </span>
-</template>
-```
-
 ## Plugin
 
 Create a Vue plugin for global access:
@@ -209,8 +165,8 @@ app.mount('#app')
 ```vue
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
-import { init, destroy, on, off } from '@supprt/widget'
-import type { SupprtConfig, Message } from '@supprt/widget'
+import { init, destroy } from '@supprt/widget'
+import type { SupprtConfig } from '@supprt/widget'
 
 interface Props {
   publicKey: string
@@ -230,12 +186,6 @@ onMounted(() => {
   }
 
   init(config)
-
-  const handleMessage = (message: Message) => {
-    console.log(message.content)
-  }
-
-  on('message:received', handleMessage)
 })
 
 onUnmounted(() => {
@@ -248,26 +198,17 @@ onUnmounted(() => {
 
 ```vue
 <script>
-import { init, destroy, on, off } from '@supprt/widget'
+import { init, destroy } from '@supprt/widget'
 
 export default {
   mounted() {
     init({
       publicKey: 'pk_xxx'
     })
-
-    on('message:received', this.handleMessage)
   },
 
   beforeUnmount() {
-    off('message:received', this.handleMessage)
     destroy()
-  },
-
-  methods: {
-    handleMessage(message) {
-      console.log(message)
-    }
   }
 }
 </script>

@@ -28,6 +28,8 @@ export interface UseWidgetReturn {
   uploadProgress: UploadProgress | null
   connectionStatus: ConnectionStatus
   queuedMessages: QueuedMessage[]
+  hasMoreMessages: boolean
+  isLoadingMore: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   translations: ReturnType<typeof getTranslations>
@@ -37,6 +39,7 @@ export interface UseWidgetReturn {
     startNewConversation: () => void
     backToList: () => void
     loadConversation: (conversation: Conversation) => Promise<void>
+    loadMoreMessages: () => Promise<void>
     sendMessage: (content: string, files?: File[]) => Promise<void>
     downloadAttachment: (attachmentId: string) => Promise<string>
     clearError: () => void
@@ -58,7 +61,6 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     isSending: false,
   })
 
-  const [hasUnread, setHasUnread] = useState(false)
   const [isComposing, setIsComposing] = useState(false)
   const [isAgentTyping, setIsAgentTyping] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
@@ -69,6 +71,8 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true,
   )
+  const [hasMoreMessages, setHasMoreMessages] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const initializingRef = useRef(false)
   const processingQueueRef = useRef(false)
@@ -88,6 +92,12 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   const translations = useMemo(
     () => getTranslations(config.locale || state.project?.locale || undefined),
     [config.locale, state.project?.locale],
+  )
+
+  // Compute hasUnread from conversations
+  const hasUnread = useMemo(
+    () => state.conversations.some((c) => c.hasUnread),
+    [state.conversations],
   )
 
   // Initialize the widget
@@ -122,6 +132,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   const loadConversation = useCallback(
     async (conversation: Conversation) => {
       setIsComposing(false)
+      setHasMoreMessages(false)
       setState((s) => ({
         ...s,
         activeConversation: conversation,
@@ -132,11 +143,27 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
         const response = await api.getConversation(conversation.id)
         // Rebuild the message IDs Set for O(1) duplicate checks
         messageIdsRef.current = new Set(response.conversation.messages.map((m) => m.id))
-        setState((s) => ({
-          ...s,
-          isLoading: false,
-          messages: response.conversation.messages,
-        }))
+        setHasMoreMessages(response.hasMore)
+
+        // Mark as read if conversation has unread messages
+        if (conversation.hasUnread) {
+          await api.markAsRead(conversation.id)
+          // Update local state to reflect read status
+          setState((s) => ({
+            ...s,
+            isLoading: false,
+            messages: response.conversation.messages,
+            conversations: s.conversations.map((c) =>
+              c.id === conversation.id ? { ...c, hasUnread: false } : c,
+            ),
+          }))
+        } else {
+          setState((s) => ({
+            ...s,
+            isLoading: false,
+            messages: response.conversation.messages,
+          }))
+        }
       } catch (error) {
         setState((s) => ({
           ...s,
@@ -147,6 +174,40 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     },
     [api],
   )
+
+  // Load more messages (pagination)
+  const loadMoreMessages = useCallback(async () => {
+    if (!state.activeConversation || isLoadingMore || !hasMoreMessages) return
+
+    const oldestMessage = state.messages[0]
+    if (!oldestMessage) return
+
+    setIsLoadingMore(true)
+
+    try {
+      const response = await api.getConversation(state.activeConversation.id, {
+        before: oldestMessage.id,
+      })
+
+      // Add new messages to the Set
+      for (const msg of response.conversation.messages) {
+        messageIdsRef.current.add(msg.id)
+      }
+
+      setHasMoreMessages(response.hasMore)
+      setState((s) => ({
+        ...s,
+        messages: [...response.conversation.messages, ...s.messages],
+      }))
+    } catch (error) {
+      setState((s) => ({
+        ...s,
+        error: error instanceof Error ? error.message : 'Failed to load more messages',
+      }))
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [api, state.activeConversation, state.messages, isLoadingMore, hasMoreMessages])
 
   // Upload files to S3
   const uploadFiles = useCallback(
@@ -296,12 +357,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
 
   // Toggle widget open/close
   const toggleOpen = useCallback(() => {
-    setState((s) => {
-      if (!s.isOpen) {
-        setHasUnread(false)
-      }
-      return { ...s, isOpen: !s.isOpen }
-    })
+    setState((s) => ({ ...s, isOpen: !s.isOpen }))
   }, [])
 
   // Close the widget
@@ -322,12 +378,29 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
   // Go back to conversation list
   const backToList = useCallback(() => {
     setIsComposing(false)
+    setHasMoreMessages(false)
     messageIdsRef.current.clear()
-    setState((s) => ({
-      ...s,
-      activeConversation: null,
-      messages: [],
-    }))
+
+    setState((s) => {
+      // Update conversation in list with latest message and sort
+      const lastMessage = s.messages[s.messages.length - 1] || null
+      const now = new Date().toISOString()
+
+      const updatedConversations = s.conversations
+        .map((c) =>
+          c.id === s.activeConversation?.id
+            ? { ...c, lastMessage, updatedAt: lastMessage ? now : c.updatedAt }
+            : c,
+        )
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+
+      return {
+        ...s,
+        activeConversation: null,
+        messages: [],
+        conversations: updatedConversations,
+      }
+    })
   }, [])
 
   // Clear error
@@ -411,23 +484,30 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
             // Add to the Set
             messageIdsRef.current.add(data.message.id)
 
-            // Mark as unread if widget is closed
-            if (!s.isOpen) {
-              setHasUnread(true)
-            }
-
             return {
               ...s,
               messages: [...s.messages, data.message],
             }
           }
 
-          // If on list view, mark as unread
-          if (!s.isOpen) {
-            setHasUnread(true)
-          }
+          // Update the conversation's hasUnread status and lastMessage
+          const updatedConversations = s.conversations
+            .map((c) =>
+              c.id === data.conversationId
+                ? {
+                    ...c,
+                    hasUnread: true,
+                    lastMessage: data.message,
+                    updatedAt: new Date().toISOString(),
+                  }
+                : c,
+            )
+            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 
-          return s
+          return {
+            ...s,
+            conversations: updatedConversations,
+          }
         })
       },
       (update) => {
@@ -487,6 +567,8 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     uploadProgress,
     connectionStatus,
     queuedMessages,
+    hasMoreMessages,
+    isLoadingMore,
     primaryColor,
     position,
     translations,
@@ -496,6 +578,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       startNewConversation,
       backToList,
       loadConversation,
+      loadMoreMessages,
       sendMessage,
       downloadAttachment,
       clearError,

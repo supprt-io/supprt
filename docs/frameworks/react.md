@@ -34,24 +34,12 @@ Create a reusable hook:
 ```jsx
 // hooks/useSupprt.js
 import { useEffect } from 'react'
-import { init, destroy, on, off } from '@supprt/widget'
+import { init, destroy } from '@supprt/widget'
 
-export function useSupprt(config, options = {}) {
-  const { onOpen, onClose, onMessage } = options
-
+export function useSupprt(config) {
   useEffect(() => {
     init(config)
-
-    if (onOpen) on('open', onOpen)
-    if (onClose) on('close', onClose)
-    if (onMessage) on('message:received', onMessage)
-
-    return () => {
-      if (onOpen) off('open', onOpen)
-      if (onClose) off('close', onClose)
-      if (onMessage) off('message:received', onMessage)
-      destroy()
-    }
+    return () => destroy()
   }, [config.publicKey])
 }
 ```
@@ -62,13 +50,7 @@ Usage:
 import { useSupprt } from './hooks/useSupprt'
 
 function App() {
-  useSupprt(
-    { publicKey: 'pk_xxx' },
-    {
-      onOpen: () => console.log('opened'),
-      onMessage: (msg) => console.log('message:', msg)
-    }
-  )
+  useSupprt({ publicKey: 'pk_xxx' })
 
   return <div>Your app</div>
 }
@@ -107,78 +89,24 @@ function App() {
 }
 ```
 
-## Programmatic Control
-
-```jsx
-import { useState } from 'react'
-import { open, close, toggle } from '@supprt/widget'
-
-function HelpButton() {
-  return (
-    <button onClick={toggle}>
-      Need help?
-    </button>
-  )
-}
-```
-
-## Event Handling
-
-```jsx
-import { useEffect, useState } from 'react'
-import { init, destroy, on, off } from '@supprt/widget'
-
-function App() {
-  const [unreadCount, setUnreadCount] = useState(0)
-
-  useEffect(() => {
-    init({ publicKey: 'pk_xxx' })
-
-    const handleMessage = () => {
-      setUnreadCount(c => c + 1)
-    }
-
-    on('message:received', handleMessage)
-
-    return () => {
-      off('message:received', handleMessage)
-      destroy()
-    }
-  }, [])
-
-  return (
-    <div>
-      {unreadCount > 0 && (
-        <span className="badge">{unreadCount}</span>
-      )}
-    </div>
-  )
-}
-```
-
 ## With Context
 
 ```jsx
 // context/SupprtContext.jsx
 import { createContext, useContext, useEffect, useState } from 'react'
-import { init, destroy, on, off, isInitialized } from '@supprt/widget'
+import { init, destroy, isInitialized } from '@supprt/widget'
 
 const SupprtContext = createContext(null)
 
-export function SupprtProvider({ publicKey, children }) {
+export function SupprtProvider({ publicKey, user, children }) {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    init({ publicKey })
+    init({ publicKey, user })
+    setReady(true)
 
-    const handleReady = () => setReady(true)
-    on('ready', handleReady)
-
-    return () => {
-      off('ready', handleReady)
-      destroy()
-    }
-  }, [publicKey])
+    return () => destroy()
+  }, [publicKey, user?.id])
 
   return (
     <SupprtContext.Provider value={{ ready, isInitialized }}>
@@ -208,8 +136,8 @@ function App() {
 
 ```tsx
 import { useEffect } from 'react'
-import { init, destroy, on, off } from '@supprt/widget'
-import type { SupprtConfig, Message } from '@supprt/widget'
+import { init, destroy } from '@supprt/widget'
+import type { SupprtConfig } from '@supprt/widget'
 
 interface Props {
   user?: {
@@ -232,16 +160,7 @@ function App({ user }: Props) {
 
     init(config)
 
-    const handleMessage = (message: Message) => {
-      console.log(message.content)
-    }
-
-    on('message:received', handleMessage)
-
-    return () => {
-      off('message:received', handleMessage)
-      destroy()
-    }
+    return () => destroy()
   }, [user?.id])
 
   return <div>Your app</div>
