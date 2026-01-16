@@ -26,11 +26,52 @@ export default defineConfig({
 
   head: [
     ['link', { rel: 'icon', href: '/logo.svg' }],
+    ['link', { rel: 'home', href: 'https://supprt.io' }],
     ['meta', { name: 'theme-color', content: '#2a9d8f' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'Supprt' }],
-    ['meta', { property: 'og:title', content: 'Supprt - Customer support made simple' }],
+    ['meta', { property: 'og:title', content: 'Supprt Documentation' }],
     ['meta', { property: 'og:description', content: 'Embeddable chat widget for any website. Works with React, Vue, Svelte, Angular, or vanilla JS.' }],
+    ['meta', { property: 'og:image', content: 'https://supprt.io/og-docs.png' }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:see_also', content: 'https://supprt.io' }],
+    ['meta', { name: 'author', content: 'Supprt' }],
+    ['meta', { name: 'publisher', content: 'Supprt' }],
+    ['link', { rel: 'author', href: 'https://supprt.io' }],
+    // JSON-LD structured data
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'TechArticle',
+          '@id': 'https://docs.supprt.io/#documentation',
+          'headline': 'Supprt Documentation',
+          'description': 'Official documentation for Supprt - embeddable chat widget for customer support.',
+          'url': 'https://docs.supprt.io',
+          'author': { '@id': 'https://supprt.io/#organization' },
+          'publisher': { '@id': 'https://supprt.io/#organization' },
+          'mainEntityOfPage': 'https://docs.supprt.io',
+          'about': { '@id': 'https://supprt.io/#software' },
+        },
+        {
+          '@type': 'Organization',
+          '@id': 'https://supprt.io/#organization',
+          'name': 'Supprt',
+          'url': 'https://supprt.io',
+          'logo': 'https://supprt.io/logo.svg',
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://docs.supprt.io/#website',
+          'url': 'https://docs.supprt.io',
+          'name': 'Supprt Documentation',
+          'description': 'Official documentation for Supprt widget',
+          'publisher': { '@id': 'https://supprt.io/#organization' },
+          'isPartOf': { '@id': 'https://supprt.io/#website' },
+        },
+      ],
+    })],
   ],
 
   themeConfig: {
@@ -108,8 +149,8 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2024 Supprt'
+      message: 'Released under the MIT License. <a href="https://supprt.io">← Back to Supprt.io</a>',
+      copyright: 'Copyright © 2026 <a href="https://supprt.io">Supprt</a>'
     },
 
     search: {

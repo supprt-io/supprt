@@ -102,7 +102,7 @@ user: {
     plan: 'pro',
     company: 'Acme Inc',
     role: 'admin',
-    trialEndsAt: '2024-02-15'
+    trialEndsAt: '2026-02-15'
   }
 }
 

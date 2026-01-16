@@ -1,0 +1,11 @@
+# Supprt Documentation - robots.txt
+# https://docs.supprt.io
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://docs.supprt.io/sitemap.xml
+
+# Link to main site
+Host: https://docs.supprt.io
