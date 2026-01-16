@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/supprt-io/supprt/compare/v0.1.2...v0.1.3) (2026-01-16)
+
+
+### Bug Fixes
+
+* disable custom window positioning on mobile ([9b2ac8e](https://github.com/supprt-io/supprt/commit/9b2ac8eb429d7491fb85b251777b4046e702d730))
+
 ## [0.1.2](https://github.com/supprt-io/supprt/compare/v0.1.1...v0.1.2) (2026-01-16)
 
 
