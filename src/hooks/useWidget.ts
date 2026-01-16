@@ -619,6 +619,20 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
           setIsAgentTyping(typingData.isTyping)
         }
       },
+      (deletedData) => {
+        // Handle conversation deletion
+        setIsComposing(false)
+        messageIdsRef.current.clear()
+        setState((s) => ({
+          ...s,
+          // If deleted conversation is active, clear it
+          activeConversation:
+            s.activeConversation?.id === deletedData.conversationId ? null : s.activeConversation,
+          messages: s.activeConversation?.id === deletedData.conversationId ? [] : s.messages,
+          // Remove from conversations list
+          conversations: s.conversations.filter((c) => c.id !== deletedData.conversationId),
+        }))
+      },
     )
 
     return () => {

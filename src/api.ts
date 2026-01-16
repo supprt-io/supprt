@@ -327,6 +327,7 @@ export class SupprtApi {
     onConversationUpdate?: (update: { conversationId: string; status: string }) => void,
     onError?: (error: Error) => void,
     onTyping?: (data: { conversationId: string; isTyping: boolean; source: string }) => void,
+    onConversationDeleted?: (data: { conversationId: string }) => void,
   ): () => void {
     if (!this.socket) {
       onError?.(new Error('Socket not connected'))
@@ -361,6 +362,15 @@ export class SupprtApi {
           onConversationUpdate?.({
             conversationId: payload.conversationId,
             status: payload.status,
+          })
+          break
+        }
+        case 'conversation.deleted': {
+          const payload = event.payload as {
+            conversationId: string
+          }
+          onConversationDeleted?.({
+            conversationId: payload.conversationId,
           })
           break
         }
