@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.1](https://github.com/supprt-io/supprt/compare/v0.1.0...v0.1.1) (2026-01-16)
+
+
+### Features
+
+* add error state component for better UX ([92ae6d3](https://github.com/supprt-io/supprt/commit/92ae6d3d1827e3a5e086cce023ee32429442dcfb))
+* add WebSocket real-time communication ([84c27ee](https://github.com/supprt-io/supprt/commit/84c27ee1d4e1f3f45fe8870e5bfadfa9831be346))
+* **docs:** add SEO improvements and cross-site linking ([72418b5](https://github.com/supprt-io/supprt/commit/72418b5d2a5fd2ba8679097d14bf773061981f68))
+* **docs:** add sitemap generation and canonical URLs for SEO ([1461918](https://github.com/supprt-io/supprt/commit/146191852ff3693b0648afc9b17140990a19cc73))
+
+
+### Bug Fixes
+
+* **ci:** switch from npm to pnpm for all workflows ([4bef53d](https://github.com/supprt-io/supprt/commit/4bef53dfd48f0973d3f6c85c028191089f593d9b))
+* send empty body for markAsRead endpoint ([07c2be4](https://github.com/supprt-io/supprt/commit/07c2be48ca1b58679a8167885fb89ceb54e65355))
+
 ## [0.1.0](https://github.com/supprt-io/supprt/compare/v0.0.8...v0.1.0) (2026-01-15)
 
 
