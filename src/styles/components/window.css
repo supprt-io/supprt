@@ -13,7 +13,7 @@
   background: white;
   border-radius: var(--supprt-radius-xl);
   box-shadow: var(--supprt-shadow-xl);
-  z-index: var(--supprt-z-index);
+  z-index: calc(var(--supprt-z-index) + 1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
