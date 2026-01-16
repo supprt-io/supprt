@@ -1,6 +1,6 @@
 import { Paperclip } from 'lucide-preact'
 import type { JSX } from 'preact'
-import { useCallback, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import { useFocusTrap } from '../hooks/useFocusTrap'
 import type { ConnectionStatus, UploadProgress } from '../hooks/useWidget'
 import { useTranslation } from '../i18n'
@@ -77,6 +77,16 @@ export function ChatWindow({
   const windowRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [droppedFiles, setDroppedFiles] = useState<File[]>([])
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 480 : false,
+  )
+
+  // Track mobile breakpoint for custom style handling
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 480)
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const handleDragEnter = useCallback((e: DragEvent) => {
     e.preventDefault()
@@ -135,12 +145,15 @@ export function ChatWindow({
     ;(focusTrapRef as { current: HTMLDivElement | null }).current = el
   }
 
+  // Don't apply custom styles on mobile - window should be fullscreen
+  const shouldApplyCustomStyle = customStyle && !isMobile
+
   return (
     // biome-ignore lint/a11y/useSemanticElements: div required for styling and ref attachment
     <div
       ref={setRefs}
-      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''} ${isDragging ? 'supprt-window--dragging' : ''} ${customStyle ? 'supprt-window--custom' : ''}`}
-      style={customStyle}
+      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''} ${isDragging ? 'supprt-window--dragging' : ''} ${shouldApplyCustomStyle ? 'supprt-window--custom' : ''}`}
+      style={shouldApplyCustomStyle ? customStyle : undefined}
       role="region"
       aria-label={project?.name || t.support}
       onDragEnter={handleDragEnter}

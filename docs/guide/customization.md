@@ -94,6 +94,10 @@ init({
 When using `style`, the default `position: fixed` and offset values are reset. You have full control over the widget placement.
 :::
 
+::: info Mobile Behavior
+On mobile screens (≤480px), custom positioning is only applied to the bubble button. The chat window always displays fullscreen for the best user experience, regardless of the `style` configuration.
+:::
+
 ## Z-Index
 
 Control the stacking order:

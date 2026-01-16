@@ -90,6 +90,10 @@ init({
 When `style` is provided, the default positioning is reset. You have full control over where the widget appears using standard CSS properties.
 :::
 
+::: info
+On mobile (≤480px), custom styles are only applied to the bubble. The chat window remains fullscreen for optimal usability.
+:::
+
 ### primaryColor
 
 - **Type:** `string`
