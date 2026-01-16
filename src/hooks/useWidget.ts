@@ -34,6 +34,7 @@ export interface UseWidgetReturn {
   isLoadingMore: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
+  customStyle: Record<string, string> | undefined
   translations: ReturnType<typeof getTranslations>
   initFailed: InitFailureReason
   actions: {
@@ -637,6 +638,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     isLoadingMore,
     primaryColor,
     position,
+    customStyle: config.style,
     translations,
     initFailed,
     actions: {

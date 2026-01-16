@@ -21,6 +21,7 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
     isLoadingMore,
     primaryColor,
     position,
+    customStyle,
     translations,
     initFailed,
     actions,
@@ -55,6 +56,7 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           isLoadingMore={isLoadingMore}
           primaryColor={primaryColor}
           position={position}
+          customStyle={customStyle}
           onSendMessage={actions.sendMessage}
           onTyping={actions.setTyping}
           onDownloadAttachment={actions.downloadAttachment}
@@ -71,6 +73,7 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           isOpen={state.isOpen}
           primaryColor={primaryColor}
           position={position}
+          customStyle={customStyle}
           unreadCount={unreadCount}
         />
       </div>

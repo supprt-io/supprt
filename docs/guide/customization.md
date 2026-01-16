@@ -40,7 +40,9 @@ Choose a color with good contrast against white. The widget automatically adjust
 
 ## Position
 
-Place the widget in either bottom corner:
+### Presets
+
+Place the widget in either bottom corner using the `position` preset:
 
 ```javascript
 init({
@@ -49,12 +51,48 @@ init({
 })
 ```
 
-### Position Values
-
 | Value | Description |
 |-------|-------------|
 | `bottom-right` | Bottom-right corner (default) |
 | `bottom-left` | Bottom-left corner |
+
+### Custom Positioning
+
+For full control over positioning, use the `style` option. This lets you apply any CSS properties to the widget:
+
+```javascript
+// Position widget higher up
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    bottom: '100px',
+    right: '50px'
+  }
+})
+
+// Position in top-right corner
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    top: '20px',
+    right: '20px'
+  }
+})
+
+// Use absolute positioning within a parent container
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    position: 'absolute',
+    bottom: '0',
+    right: '0'
+  }
+})
+```
+
+::: tip
+When using `style`, the default `position: fixed` and offset values are reset. You have full control over the widget placement.
+:::
 
 ## Z-Index
 

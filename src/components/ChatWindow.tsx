@@ -31,6 +31,7 @@ interface ChatWindowProps {
   isLoadingMore: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
+  customStyle?: Record<string, string>
   onSendMessage: (message: string, files?: File[]) => void
   onTyping?: (isTyping: boolean) => void
   onDownloadAttachment: (attachmentId: string) => Promise<string>
@@ -60,6 +61,7 @@ export function ChatWindow({
   isLoadingMore,
   primaryColor,
   position,
+  customStyle,
   onSendMessage,
   onTyping,
   onDownloadAttachment,
@@ -137,7 +139,8 @@ export function ChatWindow({
     // biome-ignore lint/a11y/useSemanticElements: div required for styling and ref attachment
     <div
       ref={setRefs}
-      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''} ${isDragging ? 'supprt-window--dragging' : ''}`}
+      class={`supprt-window ${position === 'bottom-left' ? 'supprt-window--left' : ''} ${isDragging ? 'supprt-window--dragging' : ''} ${customStyle ? 'supprt-window--custom' : ''}`}
+      style={customStyle}
       role="region"
       aria-label={project?.name || t.support}
       onDragEnter={handleDragEnter}

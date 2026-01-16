@@ -10,6 +10,7 @@ The configuration object passed to `init()`.
 interface SupprtConfig {
   publicKey: string
   position?: 'bottom-right' | 'bottom-left'
+  style?: Record<string, string>
   primaryColor?: string
   zIndex?: number
   locale?: 'en' | 'fr' | 'es' | 'de'
@@ -38,7 +39,7 @@ init({
 - **Required:** No
 - **Default:** `'bottom-right'`
 
-Position of the widget on the page.
+Position of the widget on the page. For precise positioning, use `containerStyle` instead.
 
 ```javascript
 init({
@@ -46,6 +47,48 @@ init({
   position: 'bottom-left'
 })
 ```
+
+### style
+
+- **Type:** `Record<string, string>`
+- **Required:** No
+- **Default:** `undefined`
+
+Custom CSS styles for the widget. When provided, these styles are applied directly to the bubble and window elements, giving you full control over positioning.
+
+```javascript
+// Position widget 100px from bottom, 50px from right
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    bottom: '100px',
+    right: '50px'
+  }
+})
+
+// Position widget in top-right corner
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    top: '20px',
+    right: '20px'
+  }
+})
+
+// Use absolute positioning within a container
+init({
+  publicKey: 'pk_xxx',
+  style: {
+    position: 'absolute',
+    bottom: '0',
+    right: '0'
+  }
+})
+```
+
+::: tip
+When `style` is provided, the default positioning is reset. You have full control over where the widget appears using standard CSS properties.
+:::
 
 ### primaryColor
 
@@ -223,6 +266,37 @@ init({
       company: 'Acme Inc',
       role: 'admin'
     }
+  }
+})
+```
+
+## Full Example with Custom Positioning
+
+```javascript
+import { init } from '@supprt/widget'
+
+init({
+  // Required
+  publicKey: 'pk_xxx',
+
+  // Custom positioning (overrides default position)
+  style: {
+    bottom: '100px',
+    right: '50px'
+  },
+
+  // Appearance
+  primaryColor: '#8b5cf6',
+  zIndex: 999999,
+
+  // Localization
+  locale: 'en',
+
+  // User identification
+  user: {
+    id: 'user_123',
+    email: 'john@example.com',
+    name: 'John Doe'
   }
 })
 ```

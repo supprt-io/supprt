@@ -12,6 +12,13 @@ export interface SupprtConfig {
   }
   locale?: SupportedLocale
   position?: 'bottom-right' | 'bottom-left'
+  /**
+   * Custom CSS styles for the widget container (bubble and window).
+   * Use this to override the default positioning with your own CSS.
+   * @example { bottom: '100px', right: '50px' }
+   * @example { top: '20px', left: '20px', position: 'absolute' }
+   */
+  style?: Record<string, string>
   primaryColor?: string
   zIndex?: number
   /** @internal API URL override for development/self-hosting */

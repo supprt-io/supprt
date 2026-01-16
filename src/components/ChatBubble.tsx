@@ -7,6 +7,7 @@ interface ChatBubbleProps {
   isOpen: boolean
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
+  customStyle?: Record<string, string>
   unreadCount?: number
 }
 
@@ -15,16 +16,23 @@ export function ChatBubble({
   isOpen,
   primaryColor,
   position,
+  customStyle,
   unreadCount = 0,
 }: ChatBubbleProps): JSX.Element {
   const t = useTranslation()
 
+  // Merge custom styles with backgroundColor
+  const inlineStyle: Record<string, string> = {
+    backgroundColor: primaryColor,
+    ...customStyle,
+  }
+
   return (
     <button
       type="button"
-      class={`supprt-bubble ${position === 'bottom-left' ? 'supprt-bubble--left' : ''}`}
+      class={`supprt-bubble ${position === 'bottom-left' ? 'supprt-bubble--left' : ''} ${customStyle ? 'supprt-bubble--custom' : ''}`}
       onClick={onClick}
-      style={{ backgroundColor: primaryColor }}
+      style={inlineStyle}
       aria-label={isOpen ? t.ariaCloseChat : t.ariaOpenChat}
     >
       {isOpen ? <X size={24} aria-hidden="true" /> : <MessageSquare size={24} aria-hidden="true" />}

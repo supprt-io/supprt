@@ -40,6 +40,14 @@
   transform-origin: bottom left;
 }
 
+/* Custom positioning: reset defaults when containerStyle is provided */
+.supprt-bubble--custom {
+  top: auto;
+  bottom: auto;
+  left: auto;
+  right: auto;
+}
+
 .supprt-bubble__badge {
   position: absolute;
   top: -4px;

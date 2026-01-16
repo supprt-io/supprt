@@ -27,6 +27,14 @@
   transform-origin: bottom left;
 }
 
+/* Custom positioning: reset defaults when containerStyle is provided */
+.supprt-window--custom {
+  top: auto;
+  bottom: auto;
+  left: auto;
+  right: auto;
+}
+
 .supprt-window--dragging {
   background: var(--supprt-gray-50);
 }
