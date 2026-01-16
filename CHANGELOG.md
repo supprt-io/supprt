@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/supprt-io/supprt/compare/v0.1.1...v0.1.2) (2026-01-16)
+
+
+### Features
+
+* add custom styling option for widget positioning ([290ae72](https://github.com/supprt-io/supprt/commit/290ae72b2c88ff30e2e0c010af8a7782986f5fbe))
+
 ## [0.1.1](https://github.com/supprt-io/supprt/compare/v0.1.0...v0.1.1) (2026-01-16)
 
 
