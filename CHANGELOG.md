@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/supprt-io/supprt/compare/v0.1.4...v0.1.5) (2026-01-16)
+
+
+### Features
+
+* handle conversation.deleted event ([b068702](https://github.com/supprt-io/supprt/commit/b0687020b511e0de81e55c1eb33435b52e95ba5b))
+
 ## [0.1.4](https://github.com/supprt-io/supprt/compare/v0.1.3...v0.1.4) (2026-01-16)
 
 
