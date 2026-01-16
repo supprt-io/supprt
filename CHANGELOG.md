@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/supprt-io/supprt/compare/v0.1.3...v0.1.4) (2026-01-16)
+
+
+### Bug Fixes
+
+* ensure chat window z-index is above bubble ([8278aae](https://github.com/supprt-io/supprt/commit/8278aaecc4883a095b0d266f207962ca8b9bd976))
+
 ## [0.1.3](https://github.com/supprt-io/supprt/compare/v0.1.2...v0.1.3) (2026-01-16)
 
 
