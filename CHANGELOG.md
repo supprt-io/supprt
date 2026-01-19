@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/supprt-io/supprt/compare/v0.1.5...v0.1.6) (2026-01-19)
+
+
+### Bug Fixes
+
+* upgrade esbuild to &gt;=0.25.0 to fix security vulnerability ([659e186](https://github.com/supprt-io/supprt/commit/659e1860fbf56ab6d799e21abf09add42b3cf60a))
+
 ## [0.1.5](https://github.com/supprt-io/supprt/compare/v0.1.4...v0.1.5) (2026-01-16)
 
 
