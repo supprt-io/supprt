@@ -13,10 +13,10 @@ importers:
     dependencies:
       lucide-preact:
         specifier: ^0.574.0
-        version: 0.574.0(preact@10.28.2)
+        version: 0.574.0(preact@10.28.4)
       preact:
         specifier: ^10.28.2
-        version: 10.28.2
+        version: 10.28.4
       socket.io-client:
         specifier: ^4.8.3
         version: 4.8.3
@@ -26,7 +26,7 @@ importers:
         version: 2.4.2
       '@preact/preset-vite':
         specifier: ^2.10.2
-        version: 2.10.3(@babel/core@7.28.6)(preact@10.28.2)(rollup@4.55.1)(vite@7.3.1(terser@5.46.0))
+        version: 2.10.3(@babel/core@7.28.6)(preact@10.28.4)(rollup@4.55.1)(vite@7.3.1(terser@5.46.0))
       terser:
         specifier: ^5.46.0
         version: 5.46.0
@@ -1040,8 +1040,8 @@ packages:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  preact@10.28.2:
-    resolution: {integrity: sha512-lbteaWGzGHdlIuiJ0l2Jq454m6kcpI1zNje6d8MlGAFlYvP2GO4ibnat7P74Esfz4sPTdM6UxtTwh/d3pwM9JA==}
+  preact@10.28.4:
+    resolution: {integrity: sha512-uKFfOHWuSNpRFVTnljsCluEFq57OKT+0QdOiQo8XWnQ/pSvg7OpX5eNOejELXJMWy+BwM2nobz0FkvzmnpCNsQ==}
 
   property-information@7.1.0:
     resolution: {integrity: sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==}
@@ -1565,7 +1565,7 @@ snapshots:
   '@docsearch/js@3.8.2(@algolia/client-search@5.46.3)(search-insights@2.17.3)':
     dependencies:
       '@docsearch/react': 3.8.2(@algolia/client-search@5.46.3)(search-insights@2.17.3)
-      preact: 10.28.2
+      preact: 10.28.4
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/react'
@@ -1692,12 +1692,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@preact/preset-vite@2.10.3(@babel/core@7.28.6)(preact@10.28.2)(rollup@4.55.1)(vite@7.3.1(terser@5.46.0))':
+  '@preact/preset-vite@2.10.3(@babel/core@7.28.6)(preact@10.28.4)(rollup@4.55.1)(vite@7.3.1(terser@5.46.0))':
     dependencies:
       '@babel/core': 7.28.6
       '@babel/plugin-transform-react-jsx': 7.28.6(@babel/core@7.28.6)
       '@babel/plugin-transform-react-jsx-development': 7.27.1(@babel/core@7.28.6)
-      '@prefresh/vite': 2.4.11(preact@10.28.2)(vite@7.3.1(terser@5.46.0))
+      '@prefresh/vite': 2.4.11(preact@10.28.4)(vite@7.3.1(terser@5.46.0))
       '@rollup/pluginutils': 5.3.0(rollup@4.55.1)
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.28.6)
       debug: 4.4.3
@@ -1711,20 +1711,20 @@ snapshots:
 
   '@prefresh/babel-plugin@0.5.2': {}
 
-  '@prefresh/core@1.5.9(preact@10.28.2)':
+  '@prefresh/core@1.5.9(preact@10.28.4)':
     dependencies:
-      preact: 10.28.2
+      preact: 10.28.4
 
   '@prefresh/utils@1.2.1': {}
 
-  '@prefresh/vite@2.4.11(preact@10.28.2)(vite@7.3.1(terser@5.46.0))':
+  '@prefresh/vite@2.4.11(preact@10.28.4)(vite@7.3.1(terser@5.46.0))':
     dependencies:
       '@babel/core': 7.28.6
       '@prefresh/babel-plugin': 0.5.2
-      '@prefresh/core': 1.5.9(preact@10.28.2)
+      '@prefresh/core': 1.5.9(preact@10.28.4)
       '@prefresh/utils': 1.2.1
       '@rollup/pluginutils': 4.2.1
-      preact: 10.28.2
+      preact: 10.28.4
       vite: 7.3.1(terser@5.46.0)
     transitivePeerDependencies:
       - supports-color
@@ -2191,9 +2191,9 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-preact@0.574.0(preact@10.28.2):
+  lucide-preact@0.574.0(preact@10.28.4):
     dependencies:
-      preact: 10.28.2
+      preact: 10.28.4
 
   magic-string@0.30.21:
     dependencies:
@@ -2269,7 +2269,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  preact@10.28.2: {}
+  preact@10.28.4: {}
 
   property-information@7.1.0: {}
 
