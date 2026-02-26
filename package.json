@@ -37,7 +37,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "lucide-preact": "^0.574.0",
+    "lucide-preact": "^0.575.0",
     "preact": "^10.28.2",
     "socket.io-client": "^4.8.3"
   },
