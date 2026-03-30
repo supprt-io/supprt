@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.7](https://github.com/supprt-io/supprt/compare/v0.1.6...v0.1.7) (2026-03-30)
+
+
+### Features
+
+* enforce single open conversation and add AI support in widget ([42739c6](https://github.com/supprt-io/supprt/commit/42739c6ea6eb74c9e92f989d9a1433ce9564419c))
+
+
+### Reverts
+
+* remove AI-related changes accidentally included in v0.1.7 ([a0e24fb](https://github.com/supprt-io/supprt/commit/a0e24fbd34b93ed9e2e392c2cff0e707b28cda4a))
+
 ## [0.1.6](https://github.com/supprt-io/supprt/compare/v0.1.5...v0.1.6) (2026-01-19)
 
 
