@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/supprt-io/supprt/compare/v0.1.7...v0.1.8) (2026-03-30)
+
+
+### Bug Fixes
+
+* apply zIndex config to shadow host element ([593a7e8](https://github.com/supprt-io/supprt/commit/593a7e805fdc5e267c67b1fed4f23bb4ae45d5bd))
+
 ## [0.1.7](https://github.com/supprt-io/supprt/compare/v0.1.6...v0.1.7) (2026-03-30)
 
 
