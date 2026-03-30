@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.2.0](https://github.com/supprt-io/supprt/compare/v0.1.7...v0.2.0) (2026-03-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* Requires biome 2.x for development
+
+### Features
+
+* add custom styling option for widget positioning ([290ae72](https://github.com/supprt-io/supprt/commit/290ae72b2c88ff30e2e0c010af8a7782986f5fbe))
+* add error state component for better UX ([92ae6d3](https://github.com/supprt-io/supprt/commit/92ae6d3d1827e3a5e086cce023ee32429442dcfb))
+* add stability and feature improvements ([df3a567](https://github.com/supprt-io/supprt/commit/df3a567d88b16c6493c5c22d4e0f9a3f26659b8b))
+* add user metadata support with automatic version tracking ([e9fecc9](https://github.com/supprt-io/supprt/commit/e9fecc9f22cc1d01c39e74c2fc3823ea07a4872a))
+* add WebSocket real-time communication ([84c27ee](https://github.com/supprt-io/supprt/commit/84c27ee1d4e1f3f45fe8870e5bfadfa9831be346))
+* configure trusted publisher for npm releases ([02514e3](https://github.com/supprt-io/supprt/commit/02514e3bc48ec224018620144a6b98badb90ccce))
+* display admin avatar in messages ([c22313b](https://github.com/supprt-io/supprt/commit/c22313b78e4434cd37bb9b3ffad91faec2eda08c))
+* **docs:** add SEO improvements and cross-site linking ([72418b5](https://github.com/supprt-io/supprt/commit/72418b5d2a5fd2ba8679097d14bf773061981f68))
+* **docs:** add sitemap generation and canonical URLs for SEO ([1461918](https://github.com/supprt-io/supprt/commit/146191852ff3693b0648afc9b17140990a19cc73))
+* enforce single open conversation and add AI support in widget ([42739c6](https://github.com/supprt-io/supprt/commit/42739c6ea6eb74c9e92f989d9a1433ce9564419c))
+* enhance chat functionality with file uploads and new components ([42c0437](https://github.com/supprt-io/supprt/commit/42c0437b9f5bf79f2aa777c7e0281092e360a043))
+* handle conversation.deleted event ([b068702](https://github.com/supprt-io/supprt/commit/b0687020b511e0de81e55c1eb33435b52e95ba5b))
+* hide widget on initialization failure ([61fd2b6](https://github.com/supprt-io/supprt/commit/61fd2b674ab67bb51d150a0057ef29ce1154be3e))
+* initial release of Supprt widget SDK ([eadd07e](https://github.com/supprt-io/supprt/commit/eadd07eeda8bc7d97ea541520fd78ab7cc2a157e))
+* upgrade to biome 2.x with improved accessibility ([ad854f5](https://github.com/supprt-io/supprt/commit/ad854f5469b69ebbda0015d986beddbbb63c980d))
+
+
+### Bug Fixes
+
+* **ci:** switch from npm to pnpm for all workflows ([4bef53d](https://github.com/supprt-io/supprt/commit/4bef53dfd48f0973d3f6c85c028191089f593d9b))
+* **ci:** use config files for release-please ([0de8f8a](https://github.com/supprt-io/supprt/commit/0de8f8ab0fd956162eccd9223538df741f12feea))
+* **ci:** use PAT for release-please to create PRs ([c2e103c](https://github.com/supprt-io/supprt/commit/c2e103c93fcfb86665fb50d1867e0fc9727e797f))
+* disable custom window positioning on mobile ([9b2ac8e](https://github.com/supprt-io/supprt/commit/9b2ac8eb429d7491fb85b251777b4046e702d730))
+* ensure chat window z-index is above bubble ([8278aae](https://github.com/supprt-io/supprt/commit/8278aaecc4883a095b0d266f207962ca8b9bd976))
+* format img element ([9d91fa9](https://github.com/supprt-io/supprt/commit/9d91fa9140c8f62964d6a0677844697448c12697))
+* hardcode API URL and fix data attributes ([4f5ccf2](https://github.com/supprt-io/supprt/commit/4f5ccf282e2485ee126f5dded70c6cf6eb65203a))
+* resolve esbuild security vulnerability ([f2c436f](https://github.com/supprt-io/supprt/commit/f2c436fcd3cd2c9d92eca5ff06fb8501bc408bde))
+* send empty body for markAsRead endpoint ([07c2be4](https://github.com/supprt-io/supprt/commit/07c2be48ca1b58679a8167885fb89ceb54e65355))
+* upgrade esbuild to &gt;=0.25.0 to fix security vulnerability ([659e186](https://github.com/supprt-io/supprt/commit/659e1860fbf56ab6d799e21abf09add42b3cf60a))
+* use Node.js 24 LTS in CI workflows ([e7615a4](https://github.com/supprt-io/supprt/commit/e7615a42bdade08d62e19189eb22f35c089da499))
+
+
+### Reverts
+
+* remove AI-related changes accidentally included in v0.1.7 ([a0e24fb](https://github.com/supprt-io/supprt/commit/a0e24fbd34b93ed9e2e392c2cff0e707b28cda4a))
+
 ## [0.1.7](https://github.com/supprt-io/supprt/compare/v0.1.6...v0.1.7) (2026-03-30)
 
 
