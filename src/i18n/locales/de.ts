@@ -4,7 +4,6 @@ export const de: Translations = {
   // Chat window
   support: 'Support',
   you: 'Du',
-  bot: 'BOT',
   newConversation: 'Neue Unterhaltung',
   noMessages: 'Keine Nachrichten',
   resolved: 'Gelost',
@@ -34,7 +33,6 @@ export const de: Translations = {
 
   // Actions
   dismiss: 'Schliessen',
-  talkToHuman: 'Mit Mensch sprechen',
 
   // Image lightbox
   viewImage: 'Bild ansehen',

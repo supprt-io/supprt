@@ -87,17 +87,6 @@
   margin-bottom: 4px;
 }
 
-.supprt-message__bot-badge {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 6px;
-  background: var(--supprt-gray-200);
-  color: var(--supprt-gray-600);
-  border-radius: var(--supprt-radius-sm);
-}
-
 .supprt-message__content {
   padding: 12px 16px;
   border-radius: var(--supprt-radius-lg);

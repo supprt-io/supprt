@@ -68,7 +68,6 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           onBackToList={actions.backToList}
           onLoadMore={actions.loadMoreMessages}
           onRetry={actions.retry}
-          onRequestHuman={actions.requestHuman}
         />
 
         <ChatBubble

@@ -131,7 +131,6 @@ function MessageBubble({
 }: MessageBubbleProps): JSX.Element {
   const t = useTranslation()
   const isUser = message.senderType === 'user'
-  const isBot = message.senderType === 'bot'
 
   // Separate image attachments from other files
   const imageAttachments =
@@ -152,7 +151,6 @@ function MessageBubble({
             <img src={message.senderAvatarUrl} alt="" class="supprt-message__avatar" />
           )}
           {message.senderName && <span class="supprt-message__sender">{message.senderName}</span>}
-          {isBot && <span class="supprt-message__bot-badge">{t.bot}</span>}
         </div>
       )}
 

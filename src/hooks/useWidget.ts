@@ -50,7 +50,6 @@ export interface UseWidgetReturn {
     downloadAttachment: (attachmentId: string) => Promise<string>
     clearError: () => void
     retry: () => void
-    requestHuman: () => Promise<void>
   }
 }
 
@@ -508,11 +507,6 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     [api],
   )
 
-  // Request human assistance (sends special marker message)
-  const requestHuman = useCallback(async () => {
-    await sendMessage('[REQUEST_HUMAN]')
-  }, [sendMessage])
-
   // Online/offline detection
   useEffect(() => {
     const handleOnline = () => {
@@ -694,7 +688,6 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       downloadAttachment,
       clearError,
       retry,
-      requestHuman,
     },
   }
 }

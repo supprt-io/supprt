@@ -42,7 +42,6 @@ interface ChatWindowProps {
   onBackToList: () => void
   onLoadMore: () => void
   onRetry: () => void
-  onRequestHuman?: () => void
 }
 
 export function ChatWindow({
@@ -74,7 +73,6 @@ export function ChatWindow({
   onBackToList,
   onLoadMore,
   onRetry,
-  onRequestHuman,
 }: ChatWindowProps): JSX.Element | null {
   const t = useTranslation()
   const focusTrapRef = useFocusTrap(isOpen, onClose)
@@ -237,27 +235,15 @@ export function ChatWindow({
                 onNewConversation={onNewConversation}
               />
             ) : (
-              <>
-                {onRequestHuman && (
-                  <button
-                    type="button"
-                    class="supprt-request-human"
-                    onClick={onRequestHuman}
-                    disabled={isSending}
-                  >
-                    {t.talkToHuman}
-                  </button>
-                )}
-                <MessageInput
-                  onSend={onSendMessage}
-                  onTyping={onTyping}
-                  isSending={isSending}
-                  uploadProgress={uploadProgress}
-                  primaryColor={primaryColor}
-                  externalFiles={droppedFiles}
-                  onExternalFilesProcessed={handleExternalFilesProcessed}
-                />
-              </>
+              <MessageInput
+                onSend={onSendMessage}
+                onTyping={onTyping}
+                isSending={isSending}
+                uploadProgress={uploadProgress}
+                primaryColor={primaryColor}
+                externalFiles={droppedFiles}
+                onExternalFilesProcessed={handleExternalFilesProcessed}
+              />
             )}
           </>
         )}

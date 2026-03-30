@@ -4,7 +4,6 @@ export const fr: Translations = {
   // Chat window
   support: 'Support',
   you: 'Vous',
-  bot: 'BOT',
   newConversation: 'Nouvelle conversation',
   noMessages: 'Aucun message',
   resolved: 'Resolu',
@@ -34,7 +33,6 @@ export const fr: Translations = {
 
   // Actions
   dismiss: 'Fermer',
-  talkToHuman: 'Parler à un humain',
 
   // Image lightbox
   viewImage: "Voir l'image",
