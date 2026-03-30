@@ -13,6 +13,7 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
   const {
     state,
     isComposing,
+    hasOpenConversation,
     isAgentTyping,
     uploadProgress,
     connectionStatus,
@@ -62,10 +63,12 @@ export function Widget({ config }: WidgetProps): JSX.Element | null {
           onDownloadAttachment={actions.downloadAttachment}
           onClose={actions.closeWindow}
           onSelectConversation={actions.loadConversation}
+          hasOpenConversation={hasOpenConversation}
           onNewConversation={actions.startNewConversation}
           onBackToList={actions.backToList}
           onLoadMore={actions.loadMoreMessages}
           onRetry={actions.retry}
+          onRequestHuman={actions.requestHuman}
         />
 
         <ChatBubble

@@ -238,7 +238,7 @@
         <div class="row">
           <label class="radio-field">
             <input type="radio" name="apiMode" value="mock" checked>
-            <span>Mock Server</span>
+            <span>Local Server</span>
           </label>
           <label class="radio-field">
             <input type="radio" name="apiMode" value="production">
@@ -252,7 +252,7 @@
       </div>
       <div id="statusMock" class="status">
         <span class="status-dot"></span>
-        <span class="status-text">Using mock server (localhost:3333)</span>
+        <span class="status-text">Using local server (localhost:3000)</span>
       </div>
       <div id="statusProd" class="status status-prod" style="display: none;">
         <span class="status-dot"></span>
@@ -360,7 +360,7 @@
     function getApiUrl() {
       const mode = document.querySelector('input[name="apiMode"]:checked').value
       if (mode === 'mock') {
-        return 'http://localhost:3333'
+        return 'http://localhost:3000'
       }
       return 'https://api.supprt.io'
     }

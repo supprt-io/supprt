@@ -26,6 +26,7 @@ export interface UseWidgetReturn {
   state: WidgetState
   isComposing: boolean
   hasUnread: boolean
+  hasOpenConversation: boolean
   isAgentTyping: boolean
   uploadProgress: UploadProgress | null
   connectionStatus: ConnectionStatus
@@ -49,6 +50,7 @@ export interface UseWidgetReturn {
     downloadAttachment: (attachmentId: string) => Promise<string>
     clearError: () => void
     retry: () => void
+    requestHuman: () => Promise<void>
   }
 }
 
@@ -439,15 +441,18 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     setState((s) => ({ ...s, isOpen: false }))
   }, [api, state.activeConversation])
 
-  // Start composing a new conversation
+  // Start composing a new conversation (blocked if an open conversation exists)
   const startNewConversation = useCallback(() => {
+    const hasOpen = state.conversations.some((c) => c.status === 'open')
+    if (hasOpen) return
+
     setIsComposing(true)
     setState((s) => ({
       ...s,
       activeConversation: null,
       messages: [],
     }))
-  }, [])
+  }, [state.conversations])
 
   // Go back to conversation list
   const backToList = useCallback(() => {
@@ -503,6 +508,11 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     [api],
   )
 
+  // Request human assistance (sends special marker message)
+  const requestHuman = useCallback(async () => {
+    await sendMessage('[REQUEST_HUMAN]')
+  }, [sendMessage])
+
   // Online/offline detection
   useEffect(() => {
     const handleOnline = () => {
@@ -531,6 +541,12 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     }
   }, [isOnline, queuedMessages.length, processQueue])
 
+  // Compute whether there's an open conversation
+  const hasOpenConversation = useMemo(
+    () => state.conversations.some((c) => c.status === 'open'),
+    [state.conversations],
+  )
+
   // Initialize on mount to establish SSE connection early
   // This allows receiving messages even when widget is closed
   useEffect(() => {
@@ -538,6 +554,16 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       initialize()
     }
   }, [state.isInitialized, initialize])
+
+  // Auto-load the first open conversation after initialization
+  useEffect(() => {
+    if (!state.isInitialized || state.activeConversation || isComposing) return
+
+    const openConversation = state.conversations.find((c) => c.status === 'open')
+    if (openConversation) {
+      loadConversation(openConversation)
+    }
+  }, [state.isInitialized]) // Only run once after init
 
   // Subscribe to real-time updates via WebSocket
   useEffect(() => {
@@ -644,6 +670,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
     state,
     isComposing,
     hasUnread,
+    hasOpenConversation,
     isAgentTyping,
     uploadProgress,
     connectionStatus,
@@ -667,6 +694,7 @@ export function useWidget(config: SupprtConfig): UseWidgetReturn {
       downloadAttachment,
       clearError,
       retry,
+      requestHuman,
     },
   }
 }

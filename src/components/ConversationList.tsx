@@ -36,6 +36,7 @@ function getLastMessagePreview(
 interface ConversationListProps {
   conversations: Conversation[]
   primaryColor: string
+  hasOpenConversation: boolean
   onSelectConversation: (conversation: Conversation) => void
   onNewConversation: () => void
 }
@@ -43,6 +44,7 @@ interface ConversationListProps {
 export function ConversationList({
   conversations,
   primaryColor,
+  hasOpenConversation,
   onSelectConversation,
   onNewConversation,
 }: ConversationListProps): JSX.Element {
@@ -50,15 +52,17 @@ export function ConversationList({
 
   return (
     <div class="supprt-conversations">
-      <button
-        type="button"
-        class="supprt-new-conversation"
-        onClick={onNewConversation}
-        style={{ color: primaryColor }}
-      >
-        <Plus size={20} aria-hidden="true" />
-        <span>{t.newConversation}</span>
-      </button>
+      {!hasOpenConversation && (
+        <button
+          type="button"
+          class="supprt-new-conversation"
+          onClick={onNewConversation}
+          style={{ color: primaryColor }}
+        >
+          <Plus size={20} aria-hidden="true" />
+          <span>{t.newConversation}</span>
+        </button>
+      )}
 
       <div class="supprt-conversations__list">
         {conversations.map((conv) => (

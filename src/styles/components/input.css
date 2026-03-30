@@ -190,3 +190,29 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Talk to human button */
+.supprt-request-human {
+  display: block;
+  width: 100%;
+  padding: 8px 20px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--supprt-gray-100);
+  color: var(--supprt-gray-500);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.supprt-request-human:hover:not(:disabled) {
+  background: var(--supprt-gray-50);
+  color: var(--supprt-gray-700);
+}
+
+.supprt-request-human:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

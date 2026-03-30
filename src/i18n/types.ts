@@ -4,6 +4,7 @@ export interface Translations {
   // Chat window
   support: string
   you: string
+  bot: string
   newConversation: string
   noMessages: string
   resolved: string
@@ -33,6 +34,7 @@ export interface Translations {
 
   // Actions
   dismiss: string
+  talkToHuman: string
 
   // Image lightbox
   viewImage: string

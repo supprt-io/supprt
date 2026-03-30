@@ -32,6 +32,7 @@ interface ChatWindowProps {
   primaryColor: string
   position: 'bottom-right' | 'bottom-left'
   customStyle?: Record<string, string>
+  hasOpenConversation: boolean
   onSendMessage: (message: string, files?: File[]) => void
   onTyping?: (isTyping: boolean) => void
   onDownloadAttachment: (attachmentId: string) => Promise<string>
@@ -41,6 +42,7 @@ interface ChatWindowProps {
   onBackToList: () => void
   onLoadMore: () => void
   onRetry: () => void
+  onRequestHuman?: () => void
 }
 
 export function ChatWindow({
@@ -62,6 +64,7 @@ export function ChatWindow({
   primaryColor,
   position,
   customStyle,
+  hasOpenConversation,
   onSendMessage,
   onTyping,
   onDownloadAttachment,
@@ -71,6 +74,7 @@ export function ChatWindow({
   onBackToList,
   onLoadMore,
   onRetry,
+  onRequestHuman,
 }: ChatWindowProps): JSX.Element | null {
   const t = useTranslation()
   const focusTrapRef = useFocusTrap(isOpen, onClose)
@@ -208,6 +212,7 @@ export function ChatWindow({
           <ConversationList
             conversations={conversations}
             primaryColor={primaryColor}
+            hasOpenConversation={hasOpenConversation}
             onSelectConversation={onSelectConversation}
             onNewConversation={onNewConversation}
           />
@@ -228,18 +233,31 @@ export function ChatWindow({
             {isConversationClosed ? (
               <ConversationClosed
                 primaryColor={primaryColor}
+                hasOpenConversation={hasOpenConversation}
                 onNewConversation={onNewConversation}
               />
             ) : (
-              <MessageInput
-                onSend={onSendMessage}
-                onTyping={onTyping}
-                isSending={isSending}
-                uploadProgress={uploadProgress}
-                primaryColor={primaryColor}
-                externalFiles={droppedFiles}
-                onExternalFilesProcessed={handleExternalFilesProcessed}
-              />
+              <>
+                {onRequestHuman && (
+                  <button
+                    type="button"
+                    class="supprt-request-human"
+                    onClick={onRequestHuman}
+                    disabled={isSending}
+                  >
+                    {t.talkToHuman}
+                  </button>
+                )}
+                <MessageInput
+                  onSend={onSendMessage}
+                  onTyping={onTyping}
+                  isSending={isSending}
+                  uploadProgress={uploadProgress}
+                  primaryColor={primaryColor}
+                  externalFiles={droppedFiles}
+                  onExternalFilesProcessed={handleExternalFilesProcessed}
+                />
+              </>
             )}
           </>
         )}
