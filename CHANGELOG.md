@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/supprt-io/supprt/compare/v0.1.8...v0.1.9) (2026-03-30)
+
+
+### Bug Fixes
+
+* resolve high-severity Dependabot vulnerabilities (rollup, socket.io-parser) ([#34](https://github.com/supprt-io/supprt/issues/34)) ([ce1361e](https://github.com/supprt-io/supprt/commit/ce1361eac06ea6b3ad991d95378cc6a5279acc03))
+
 ## [0.1.8](https://github.com/supprt-io/supprt/compare/v0.1.7...v0.1.8) (2026-03-30)
 
 
