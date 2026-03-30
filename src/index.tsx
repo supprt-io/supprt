@@ -29,7 +29,8 @@ export function init(config: SupprtConfig): SupprtInstance {
   // Create shadow host
   shadowHost = document.createElement('div')
   shadowHost.id = 'supprt-widget-host'
-  shadowHost.style.cssText = 'all: initial; position: fixed; z-index: 2147483647;'
+  const zIndex = config.zIndex ?? 2147483647
+  shadowHost.style.cssText = `all: initial; position: fixed; z-index: ${zIndex};`
   document.body.appendChild(shadowHost)
 
   // Create shadow root for style isolation
